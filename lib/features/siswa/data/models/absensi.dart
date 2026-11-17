@@ -1,4 +1,4 @@
-import 'page_meta.dart';
+import '../../../../shared/models/page_meta.dart';
 
 /// Item absensi harian — `AbsensiHarianResource` backend.
 class AbsensiHarianItem {

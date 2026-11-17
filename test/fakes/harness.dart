@@ -145,14 +145,31 @@ Map<String, dynamic> tagihanListBody() => {
 Map<String, dynamic> notifikasiListBody() => {
   'success': true,
   'message': 'Berhasil',
-  'data': {'items': <Map<String, dynamic>>[], 'belum_dibaca': 0},
+  'data': {
+    'items': [
+      {
+        'id': 9,
+        'judul': 'Pemberitahuan Sekolah',
+        'isi': 'Isi notifikasi.',
+        'jenis': 'pengumuman',
+        'prioritas': 'normal',
+        'waktu_dibuat': '2026-11-17T08:00:00+07:00',
+        'sumber_tabel': null,
+        'sumber_id': null,
+        'link': null,
+        'dibaca': false,
+        'dibaca_pada': null,
+      },
+    ],
+    'belum_dibaca': 2,
+  },
   'meta': {
     'current_page': 1,
     'per_page': 15,
     'last_page': 1,
-    'total': 0,
-    'from': null,
-    'to': null,
+    'total': 1,
+    'from': 1,
+    'to': 1,
   },
 };
 
@@ -183,5 +200,336 @@ Map<String, dynamic> meSuccessBody({
       'last_used_at': '2026-11-17T09:00:00+07:00',
       'expires_at': '2026-12-17T08:00:00+07:00',
     },
+  },
+};
+
+Map<String, dynamic> guruBerandaBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'guru': {
+      'id': 7,
+      'nip': '198801012010011001',
+      'kode_guru': 'GR001',
+      'nama': 'Guru Uji',
+      'status': 'aktif',
+    },
+    'akun': {'username': 'guru01', 'wajib_ganti_password': false},
+    'konteks': {
+      'valid': true,
+      'peringatan': <String>[],
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'kelas': [
+      {
+        'id': 99,
+        'nama': 'X-IPA-1',
+        'tingkat': 'X',
+        'jenis': 'Reguler',
+        'rombel': 'A',
+        'sumber': ['mengajar'],
+        'jumlah_siswa': 2,
+        'mapel': [
+          {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+        ],
+      },
+    ],
+    'ringkasan': {
+      'jumlah_kelas': 1,
+      'jumlah_penugasan': 1,
+      'pertemuan_hari_ini': 1,
+      'absensi_perjam_hari_ini': 2,
+      'absensi_harian_hari_ini': 2,
+    },
+    'nama_hari': 'Selasa',
+    'jadwal_hari_ini': [
+      {
+        'id': 55,
+        'hari': 2,
+        'nama_hari': 'Selasa',
+        'jam_ke': 1,
+        'mulai': '07:00',
+        'selesai': '07:45',
+        'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+        'kelas': {'id': 99, 'nama': 'X-IPA-1', 'tingkat': 'X'},
+        'semester': {'id': 11, 'nama': 'Ganjil'},
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruProfilBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'id': 7,
+    'nip': '198801012010011001',
+    'kode_guru': 'GR001',
+    'nama': 'Guru Uji',
+    'jenis_kelamin': 'L',
+    'tempat_lahir': 'Jakarta',
+    'tanggal_lahir': '1988-01-01',
+    'telepon': '08123456789',
+    'alamat': 'Jl. Guru No. 1',
+    'status': 'aktif',
+    'mapel': [
+      {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+    ],
+    'akun': {'username': 'guru01', 'wajib_ganti_password': false},
+  },
+};
+
+Map<String, dynamic> guruKelasListBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'konteks': {
+      'valid': true,
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'kelas': [
+      {
+        'id': 99,
+        'nama': 'X-IPA-1',
+        'tingkat': 'X',
+        'jenis': 'Reguler',
+        'rombel': 'A',
+        'tahunajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+        'jurusan': {'id': 1, 'nama': 'IPA'},
+        'sumber': ['mengajar'],
+        'jumlah_siswa': 2,
+        'mapel': [
+          {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+        ],
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruPenugasanBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'penugasan': [
+      {
+        'id': 501,
+        'semester': {
+          'id': 11,
+          'nama': 'Ganjil',
+          'tahun_ajaran': 'TA-2026/2027',
+        },
+        'kelas': {'id': 99, 'nama': 'X-IPA-1', 'tingkat': 'X'},
+        'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruJadwalBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'konteks': {
+      'valid': true,
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'filter': {'tanggal': '2026-11-17', 'hari': 2, 'nama_hari': 'Selasa'},
+    'jadwal': [
+      {
+        'id': 55,
+        'hari': 2,
+        'nama_hari': 'Selasa',
+        'jam_ke': 1,
+        'mulai': '07:00',
+        'selesai': '07:45',
+        'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+        'kelas': {'id': 99, 'nama': 'X-IPA-1', 'tingkat': 'X'},
+        'semester': {'id': 11, 'nama': 'Ganjil'},
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruPenugasanDetailBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'id': 501,
+    'semester': {'id': 11, 'nama': 'Ganjil', 'tahun_ajaran': 'TA-2026/2027'},
+    'kelas': {'id': 99, 'nama': 'X-IPA-1', 'tingkat': 'X'},
+    'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+    'jumlah_siswa': 2,
+    'komponen': [
+      {'id': 601, 'nama': 'Tugas', 'bobot': 50.0, 'urutan': 1},
+      {'id': 602, 'nama': 'UTS', 'bobot': 50.0, 'urutan': 2},
+    ],
+    'total_bobot_aktif': 100.0,
+    'konfigurasi_valid': true,
+    'terkunci': false,
+  },
+};
+
+Map<String, dynamic> guruPenugasanSiswaBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'penugasan_id': 501,
+    'terkunci': false,
+    'siswa': [
+      {
+        'id': 1001,
+        'nisn': '001',
+        'nis': 'S001',
+        'nama': 'Siswa A',
+        'nilai': {'601': 80.0, '602': 90.0},
+        'nilai_draft': 85.0,
+        'lengkap': true,
+        'jumlah_terisi': 2,
+        'jumlah_komponen': 2,
+        'bobot_terisi': 100.0,
+        'bobot_total': 100.0,
+        'konfigurasi_valid': true,
+      },
+      {
+        'id': 1002,
+        'nisn': '002',
+        'nis': 'S002',
+        'nama': 'Siswa B',
+        'nilai': {'601': null, '602': null},
+        'nilai_draft': null,
+        'lengkap': false,
+        'jumlah_terisi': 0,
+        'jumlah_komponen': 2,
+        'bobot_terisi': 0.0,
+        'bobot_total': 100.0,
+        'konfigurasi_valid': true,
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruHarianGridBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'tanggal': '2026-11-17',
+    'kelas_id': 99,
+    'konteks': {'valid': true},
+    'siswa': [
+      {
+        'id': 1001,
+        'nisn': '001',
+        'nama': 'Siswa A',
+        'absensi': {'id': 71, 'status': 'sakit', 'catatan': 'Demam'},
+      },
+      {'id': 1002, 'nisn': '002', 'nama': 'Siswa B', 'absensi': null},
+    ],
+  },
+};
+
+Map<String, dynamic> guruAbsensiHarianBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'items': [
+      {
+        'id': 71,
+        'tanggal': '2026-11-17',
+        'status': 'sakit',
+        'catatan': 'Demam',
+        'kelas': {'id': 99, 'nama': 'X-IPA-1'},
+        'siswa': {'id': 1001, 'nama': 'Siswa A'},
+      },
+    ],
+  },
+  'meta': {
+    'current_page': 1,
+    'per_page': 15,
+    'last_page': 1,
+    'total': 1,
+    'from': 1,
+    'to': 1,
+  },
+};
+
+Map<String, dynamic> guruHarianListBody() => guruAbsensiHarianBody();
+
+Map<String, dynamic> guruPertemuanBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'tanggal': '2026-11-17',
+    'pertemuan': [
+      {
+        'id': 301,
+        'jadwal_kelas_id': 55,
+        'tanggal': '2026-11-17',
+        'hari': 2,
+        'jam_ke': 1,
+        'waktu_mulai': '07:00',
+        'waktu_selesai': '07:45',
+        'status': 'terjadwal',
+        'kelas': {'id': 99, 'nama': 'X-IPA-1'},
+        'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+        'jumlah_siswa': 2,
+        'jumlah_absensi': 1,
+        'bisa_diabsen': true,
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> guruPerjamGridBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'id': 301,
+    'tanggal': '2026-11-17',
+    'hari': 2,
+    'jam_ke': 1,
+    'waktu_mulai': '07:00',
+    'waktu_selesai': '07:45',
+    'status': 'terjadwal',
+    'bisa_diabsen': true,
+    'kelas': {'id': 99, 'nama': 'X-IPA-1'},
+    'mapel': {'id': 1, 'kode': 'MAT', 'nama': 'Matematika'},
+    'siswa': [
+      {'id': 1001, 'nisn': '001', 'nama': 'Siswa A', 'absensi': null},
+      {'id': 1002, 'nisn': '002', 'nama': 'Siswa B', 'absensi': null},
+    ],
+  },
+};
+
+Map<String, dynamic> guruNotifikasiBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'items': [
+      {
+        'id': 9,
+        'judul': 'Pemberitahuan Sekolah',
+        'isi': 'Isi notifikasi.',
+        'jenis': 'pengumuman',
+        'prioritas': 'normal',
+        'waktu_dibuat': '2026-11-17T08:00:00+07:00',
+        'sumber_tabel': null,
+        'sumber_id': null,
+        'link': null,
+        'dibaca': false,
+        'dibaca_pada': null,
+      },
+    ],
+    'belum_dibaca': 2,
+  },
+  'meta': {
+    'current_page': 1,
+    'per_page': 15,
+    'last_page': 1,
+    'total': 1,
+    'from': 1,
+    'to': 1,
   },
 };

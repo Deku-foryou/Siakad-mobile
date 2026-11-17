@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,7 +7,21 @@ import '../../features/auth/application/auth_state.dart';
 import '../../features/auth/presentation/pages/change_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
-import '../../features/guru/presentation/guru_home_page.dart';
+import '../../features/guru/presentation/absensi/harian/guru_harian_detail_page.dart';
+import '../../features/guru/presentation/absensi/harian/guru_harian_edit_page.dart';
+import '../../features/guru/presentation/absensi/harian/guru_harian_grid_page.dart';
+import '../../features/guru/presentation/absensi/perjam/guru_perjam_detail_page.dart';
+import '../../features/guru/presentation/absensi/perjam/guru_perjam_edit_page.dart';
+import '../../features/guru/presentation/absensi/perjam/guru_perjam_grid_page.dart';
+import '../../features/guru/presentation/guru_shell.dart';
+import '../../features/guru/presentation/jadwal/guru_jadwal_detail_page.dart';
+import '../../features/guru/presentation/jadwal/guru_jadwal_page.dart';
+import '../../features/guru/presentation/kelas/guru_kelas_detail_page.dart';
+import '../../features/guru/presentation/kelas/guru_siswa_page.dart';
+import '../../features/guru/presentation/notifikasi/guru_notifikasi_detail_page.dart';
+import '../../features/guru/presentation/notifikasi/guru_notifikasi_page.dart';
+import '../../features/guru/presentation/penilaian/guru_nilai_input_page.dart';
+import '../../features/guru/presentation/penilaian/guru_penilaian_detail_page.dart';
 import '../../features/siswa/presentation/akademik/siswa_absensi_page.dart';
 import '../../features/siswa/presentation/akademik/siswa_jadwal_page.dart';
 import '../../features/siswa/presentation/akademik/siswa_nilai_page.dart';
@@ -166,7 +180,125 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.guru,
         name: 'guru',
-        builder: (context, state) => const GuruHomePage(),
+        builder: (context, state) => const GuruShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.guruKelasDetail,
+        name: 'guru-kelas-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruKelasDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruKelasSiswa,
+        name: 'guru-kelas-siswa',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruSiswaPage(kelasId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruJadwal,
+        name: 'guru-jadwal',
+        builder: (context, state) => const GuruJadwalPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.guruJadwalDetail,
+        name: 'guru-jadwal-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruJadwalDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruPenugasanDetail,
+        name: 'guru-penugasan-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruPenilaianDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruNilaiInput,
+        name: 'guru-nilai-input',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['penugasanId'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruNilaiInputPage(penugasanId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruAbsensiHarianGrid,
+        name: 'guru-absensi-harian-grid',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['kelasId'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruHarianGridPage(kelasId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruAbsensiHarianDetail,
+        name: 'guru-absensi-harian-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruAbsensiHarianDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruAbsensiHarianEdit,
+        name: 'guru-absensi-harian-edit',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruAbsensiHarianEditPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruPerjamGrid,
+        name: 'guru-perjam-grid',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['pertemuanId'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruPerjamGridPage(pertemuanId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruPerjamDetail,
+        name: 'guru-perjam-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruPerjamDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruPerjamEdit,
+        name: 'guru-perjam-edit',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruPerjamEditPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.guruNotifikasi,
+        name: 'guru-notifikasi',
+        builder: (context, state) => const GuruNotifikasiPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.guruNotifikasiDetail,
+        name: 'guru-notifikasi-detail',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          if (id == null) return const _InvalidParameterPage();
+          return GuruNotifikasiDetailPage(id: id);
+        },
       ),
       GoRoute(
         path: AppRoutes.wali,

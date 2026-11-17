@@ -6,7 +6,7 @@ import '../../../core/errors/api_exception.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/network/api_envelope.dart';
 import 'models/keuangan.dart';
-import 'models/page_meta.dart';
+import '../../../shared/models/page_meta.dart';
 
 /// Dokumen privat hasil unduhan (bytes + nama file dari Content-Disposition).
 class DokumenResult {

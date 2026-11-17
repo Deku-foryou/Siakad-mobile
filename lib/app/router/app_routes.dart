@@ -23,7 +23,24 @@ class AppRoutes {
   static const String siswaPembayaranDetail = '/siswa/pembayaran/:id';
   static const String siswaAttemptDetail = '/siswa/pembayaran-attempt/:id';
 
+  // Area guru (shell + sub-route).
   static const String guru = '/guru';
+  static const String guruJadwal = '/guru/jadwal';
+  static const String guruJadwalDetail = '/guru/jadwal/:id';
+  static const String guruKelasDetail = '/guru/kelas/:id';
+  static const String guruKelasSiswa = '/guru/kelas/:id/siswa';
+  static const String guruPenugasanDetail = '/guru/penilaian/:id';
+  static const String guruNilaiInput = '/guru/penilaian/:penugasanId/nilai';
+  static const String guruAbsensiHarianGrid =
+      '/guru/absensi/harian/grid/:kelasId';
+  static const String guruAbsensiHarianDetail = '/guru/absensi/harian/:id';
+  static const String guruAbsensiHarianEdit = '/guru/absensi/harian/:id/edit';
+  static const String guruPerjamGrid = '/guru/absensi/perjam/grid/:pertemuanId';
+  static const String guruPerjamDetail = '/guru/absensi/perjam/:id';
+  static const String guruPerjamEdit = '/guru/absensi/perjam/:id/edit';
+  static const String guruNotifikasi = '/guru/notifikasi';
+  static const String guruNotifikasiDetail = '/guru/notifikasi/:id';
+
   static const String wali = '/wali';
 
   static const Map<String, String> _roleByArea = {

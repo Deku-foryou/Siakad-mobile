@@ -5,12 +5,12 @@ import '../data/keuangan_repository.dart';
 import '../data/models/beranda.dart';
 import '../data/models/keuangan.dart';
 import '../data/models/nilai.dart';
-import '../data/models/notifikasi.dart';
-import '../data/models/page_meta.dart';
+import '../../../shared/models/notifikasi.dart';
+import '../../../shared/models/page_meta.dart';
 import '../data/models/pengumuman.dart';
-import '../data/paged_state.dart';
+import '../../../shared/data/paged_state.dart';
 import '../data/siswa_repository.dart';
-import 'paged_notifier.dart';
+import '../../../shared/application/paged_notifier.dart';
 
 // ---------------------------------------------------------------- Repositories
 

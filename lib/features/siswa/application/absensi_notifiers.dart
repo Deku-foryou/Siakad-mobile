@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/errors/api_exception.dart';
 import 'siswa_providers.dart';
 import '../data/models/absensi.dart';
-import '../data/models/page_meta.dart';
+import '../../../shared/models/page_meta.dart';
 
 /// State untuk list absensi dengan ringkasan (harian/periode/perjam).
 class AbsensiListState<Item> {

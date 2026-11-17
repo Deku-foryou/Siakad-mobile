@@ -1,5 +1,5 @@
 import '../../../core/errors/api_exception.dart';
-import 'models/page_meta.dart';
+import '../models/page_meta.dart';
 
 /// State generik untuk list paginated.
 class PagedState<T> {

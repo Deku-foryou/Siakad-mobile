@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/models/page_meta.dart';
+import '../../../shared/models/page_meta.dart';
 import '../data/paged_state.dart';
 
 import '../../../core/errors/api_exception.dart';

@@ -6,8 +6,8 @@ import '../../../core/network/api_envelope.dart';
 import 'models/absensi.dart';
 import 'models/beranda.dart';
 import 'models/nilai.dart';
-import 'models/notifikasi.dart';
-import 'models/page_meta.dart';
+import '../../../shared/models/notifikasi.dart';
+import '../../../shared/models/page_meta.dart';
 import 'models/pengumuman.dart';
 
 /// Repository akademik & komunikasi siswa — read-only (kecuali tandai dibaca).

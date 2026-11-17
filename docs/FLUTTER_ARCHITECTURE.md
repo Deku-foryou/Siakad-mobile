@@ -45,25 +45,34 @@ lib/
 │   ├── auth/  (lihat §6)
 │   ├── siswa/                    # LENGKAP — lihat §12 (Siswa Module)
 │   │   ├── data/
-│   │   │   ├── models/           # page_meta, beranda, absensi, nilai, pengumuman,
-│   │   │   │                     # notifikasi, keuangan (manual fromJson)
+│   │   │   ├── models/           # (shared/models: page_meta) beranda, absensi, nilai,
+│   │   │   │                     # pengumuman, keuangan (manual fromJson)
 │   │   │   ├── siswa_repository.dart      # akademik + komunikasi siswa (read-only)
 │   │   │   ├── keuangan_repository.dart   # keuangan (K1–K11) + dokumen privat
-│   │   │   ├── private_document_service.dart # save bytes ke app-documents dir + open_filex
-│   │   │   └── paged_state.dart  # PagedResult/PageMeta bersama + PagedState
+│   │   │   └── private_document_service.dart # save bytes ke app-documents dir + open_filex
 │   │   ├── application/
 │   │   │   ├── siswa_providers.dart       # repository + FutureProviders (+ autoDispose.family)
-│   │   │   ├── paged_notifier.dart       # base PagedNotifier (halaman list generik)
-│   │   │   ├── absensi_notifiers.dart    # state absensi khusus (rekap + list)
-│   │   │   └── siswa_tab_index.dart      # SiswaTabIndex — index tab di shell
+│   │   │   └── absensi_notifiers.dart    # state absensi khusus (rekap + list)
 │   │   └── presentation/
 │   │       ├── siswa_shell.dart           # Scaffold + NavigationBar (5 tab, IndexedStack)
 │   │       ├── beranda/  akademik/  keuangan/  notifikasi/  pengumuman/  profil/
-│   ├── guru/presentation/guru_home_page.dart     # placeholder
+│   ├── guru/                     # LENGKAP — lihat §13 (Guru Module)
+│   │   ├── data/
+│   │   │   ├── models/           # guru.dart, absensi.dart, penilaian.dart (manual)
+│   │   │   └── guru_repository.dart      # G1–G30 (22 endpoint yang dipakai) + mutasi
+│   │   ├── application/
+│   │   │   ├── guru_providers.dart        # repository + providers + paged notifiers
+│   │   │   └── guru_tab_index.dart        # GuruTabIndex
+│   │   └── presentation/
+│   │       ├── guru_shell.dart             # Scaffold + NavigationBar (5 tab, IndexedStack)
+│   │       ├── beranda/  kelas/  jadwal/  absensi/  penilaian/  notifikasi/  profil/
 │   └── wali/presentation/wali_home_page.dart     # placeholder
 └── shared/
-    ├── providers/core_providers.dart          # appConfig, storage, dio, authRepository
-    └── widgets/role_placeholder_page.dart     # Scaffold placeholder + logout actions
+    ├── data/paged_state.dart             # PagedResult (dipakai siswa & guru)
+    ├── models/                           # page_meta.dart, notifikasi.dart
+    ├── application/paged_notifier.dart   # base PagedNotifier (generic list)
+    ├── providers/core_providers.dart     # appConfig, storage, dio, authRepository
+    └── widgets/role_placeholder_page.dart # Scaffold placeholder + logout actions
 ```
 
 Prinsip: **feature-first** dengan pemisahan `data / application / presentation`.
@@ -234,7 +243,17 @@ Route utama:
 /siswa/pengumuman · /siswa/pengumuman/:id · /siswa/notifikasi/:id
 /siswa/pembayaran · /siswa/pembayaran/:id · /siswa/tagihan/:id
 /siswa/pembayaran-attempt/:id
-/guru · /wali                         # placeholder
+/guru                                 # shell guru (NavigationBar: Beranda, Kelas,
+                                      # Absensi, Penilaian, Profil)
+/guru/jadwal · /guru/jadwal/:id
+/guru/kelas/:id · /guru/kelas/:id/siswa
+/guru/penilaian/:id · /guru/penilaian/:id/nilai
+/guru/absensi/harian/:id · /guru/absensi/harian/:id/edit
+/guru/absensi/harian/grid/:kelasId
+/guru/absensi/perjam/:id · /guru/absensi/perjam/:id/edit
+/guru/absensi/perjam/grid/:pertemuanId
+/guru/notifikasi · /guru/notifikasi/:id
+/wali                                 # placeholder
 ```
 
 Initial: `/splash`. Redirect **murni & deterministik** (`resolveRedirect`),
@@ -293,7 +312,7 @@ flutter build apk --debug
   Sandbox; seluruh alur Attempt diuji lewat mock. Integrasi webhook tetap
   server-to-server.
 - FCM/APNs, offline mutation, refresh token, admin/superadmin mobile.
-- Fitur guru & wali (masih placeholder).
+- Fitur wali (masih placeholder).
 - iOS build belum diuji (butuh macOS + Xcode).
 - Preview/buka PDF dokumen privat memakai viewer bawaan perangkat
   (`open_filex`), bukan viewer PDF di dalam aplikasi.
@@ -321,7 +340,7 @@ Area siswa berfitur penuh di atas `/auth/*` Phase 2:
 
 **Pola data:** satu-shot data via `FutureProvider.autoDispose(.family)`;
 list ter-paginasi via `NotifierProvider.autoDispose` + `PagedNotifier<T>`
-(`application/paged_notifier.dart` + `paged_state.dart`) — state `items/meta/
+(`shared/application/paged_notifier.dart` + `shared/data/paged_state.dart`) — state `items/meta/
 busy/refreshing/error`, tombol "Muat Lebih Banyak". Absensi memakai state
 ringkasan khusus (`AbsensiListState`) karena response membawa `ringkasan`/
 `rekap_semester`/`rekap_total`.
@@ -336,3 +355,34 @@ dibuka dengan `open_filex` (tidak ada URL publik yang dibangun sendiri).
 **Tidak ada business logic backend yang diduplikasi** (nilai akhir, rekap
 absensi, status tagihan dikonsumsi apa adanya) dan **tidak ada mutasi**
 ademik; siswa hanya bisa tandai notifikasi dibaca.
+
+## 13. Guru Module (Phase 4)
+
+Area guru berfitur penuh di atas kontrak `/api/v1/guru/*`:
+
+| Kelompok | Endpoint backend | Halaman/Route |
+|---|---|---|
+| Beranda | `GET /guru/beranda` | tab Beranda |
+| Profil | `GET /guru/profil` | tab Profil |
+| Kelas | `GET /guru/kelas`, `GET /guru/kelas/{id}`, `GET /guru/kelas/{id}/siswa` | tab Kelas, `/guru/kelas/:id`, `/siswa` |
+| Penugasan | `GET /guru/penugasan` | tab Penilaian |
+| Jadwal | `GET /guru/jadwal`, `GET /guru/jadwal/hari-ini`, `GET /guru/jadwal/{id}` | `/guru/jadwal`, detail |
+| Absensi harian | `GET /guru/absensi/harian`, `GET .../harian/{id}`, `GET /guru/kelas/{id}/absensi`, `POST /guru/absensi/harian`, `PATCH .../harian/{id}` | tab Absensi · Harian, grid, edit |
+| Absensi per jam | `GET /guru/absensi/perjam`, `GET .../perjam/{id}`, `GET .../pertemuan`, `GET .../pertemuan/{id}`, `POST /guru/absensi/perjam`, `PATCH .../perjam/{id}` | tab Absensi · Per Jam |
+| Penilaian | `GET /guru/penilaian/penugasan/{id}`, `GET .../siswa`, `PUT .../nilai`, `PATCH .../nilai` | `/guru/penilaian/:id`, `/nilai` |
+| Notifikasi | `GET /guru/notifikasi*` | `/guru/notifikasi`, detail |
+
+**Aturan khusus:**
+- `GuruRepository` TIDAK PERNAH mengirim `guru_id`/`user_id`; identitas dari token.
+- `GET /guru/absensi/perjam/pertemuan` memicu `generateUntukTanggal()` di backend
+  (snapshot idempoten) → hanya dipanggil saat pengguna membuka tab Per Jam,
+  bukan di dashboard/prefetch.
+- Isi/edit absensi: hanya kelas yang `diajar` (backend menegakkan); H+1 enforced
+  backend; grid dipakai untuk simpan massal (upsert per siswa, payload
+  `{tanggal, kelas_id, records[]}`).
+- Penilaian: bobot=100 dan terkunci ditegakkan backend; UI menampilkan
+  disabled-mode bila `terkunci` atau `konfigurasi_valid=false` (bukan
+  memblokir backend); payload batch `{nilai: {siswa: {komponen: 0..100|null}}}`.
+- Bottom navigation 5 tab dengan `IndexedStack` (state preserved); notifikasi
+  via icon AppBar Beranda dengan badge unread.
+- Shell guru memakai prefix guard `/guru/*` (area role lain → home sendiri).

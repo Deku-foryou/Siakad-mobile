@@ -6,7 +6,7 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../application/siswa_providers.dart';
-import '../../data/models/notifikasi.dart';
+import '../../../../shared/models/notifikasi.dart';
 
 /// Tab Notifikasi siswa: daftar, filter status, badge unread, tandai dibaca.
 class SiswaNotifikasiPage extends ConsumerWidget {

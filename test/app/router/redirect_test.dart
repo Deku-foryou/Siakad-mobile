@@ -243,4 +243,67 @@ void main() {
       );
     });
   });
+
+  group('sub-route area role lain (prefix match)', () {
+    test('siswa tidak bisa membuka /guru/*', () {
+      expect(
+        resolveRedirect(authenticated(_siswa), '/guru/jadwal'),
+        AppRoutes.siswa,
+      );
+      expect(
+        resolveRedirect(authenticated(_siswa), '/guru/kelas/1/siswa'),
+        AppRoutes.siswa,
+      );
+      expect(
+        resolveRedirect(authenticated(_siswa), '/guru/notifikasi/3'),
+        AppRoutes.siswa,
+      );
+    });
+
+    test('guru tidak bisa membuka /siswa/* maupun /wali/*', () {
+      expect(
+        resolveRedirect(authenticated(_guru), '/siswa/jadwal'),
+        AppRoutes.guru,
+      );
+      expect(
+        resolveRedirect(authenticated(_guru), '/siswa/absensi'),
+        AppRoutes.guru,
+      );
+      expect(
+        resolveRedirect(authenticated(_guru), '/wali/beranda'),
+        AppRoutes.guru,
+      );
+    });
+
+    test('wali tidak bisa membuka /guru/* maupun /siswa/*', () {
+      expect(
+        resolveRedirect(authenticated(_wali), '/guru/notifikasi/1'),
+        AppRoutes.wali,
+      );
+      expect(
+        resolveRedirect(authenticated(_wali), '/siswa/nilai'),
+        AppRoutes.wali,
+      );
+    });
+
+    test('guru boleh membuka sub-route guru', () {
+      expect(resolveRedirect(authenticated(_guru), '/guru/jadwal'), isNull);
+      expect(resolveRedirect(authenticated(_guru), '/guru/kelas/1'), isNull);
+      expect(
+        resolveRedirect(authenticated(_guru), '/guru/penilaian/3/nilai'),
+        isNull,
+      );
+    });
+
+    test('siswa boleh membuka sub-route siswa', () {
+      expect(
+        resolveRedirect(authenticated(_siswa), '/siswa/rapor/11/99'),
+        isNull,
+      );
+      expect(
+        resolveRedirect(authenticated(_siswa), '/siswa/pembayaran-attempt/7'),
+        isNull,
+      );
+    });
+  });
 }
