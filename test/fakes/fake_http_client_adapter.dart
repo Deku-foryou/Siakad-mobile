@@ -9,10 +9,24 @@ class _QueuedResponse {
   final String body;
 }
 
+class _QueuedBytes {
+  _QueuedBytes(
+    this.statusCode,
+    this.bytes, {
+    this.filename,
+    this.contentType = 'application/octet-stream',
+  });
+  final int statusCode;
+  final List<int> bytes;
+  final String? filename;
+  final String contentType;
+}
+
 /// Fake HttpClientAdapter Dio: melayani response ter-antre dan mencatat
 /// seluruh request (untuk asersi header/URL) tanpa jaringan sungguhan.
 class FakeHttpClientAdapter implements HttpClientAdapter {
   final List<_QueuedResponse> _queue = [];
+  final List<_QueuedBytes> _queueBytes = [];
   final List<RequestOptions> requests = [];
   Object? error; // bila diisi, setiap fetch melempar error ini
 
@@ -26,6 +40,24 @@ class FakeHttpClientAdapter implements HttpClientAdapter {
     _queue.add(_QueuedResponse(statusCode, rawBody));
   }
 
+  /// Antrekan response binary (mis. PDF dokumen privat) dengan header
+  /// Content-Disposition agar filename bisa diuji.
+  void queueBytes(
+    int statusCode,
+    List<int> bytes, {
+    String? filename,
+    String contentType = 'application/pdf',
+  }) {
+    _queueBytes.add(
+      _QueuedBytes(
+        statusCode,
+        bytes,
+        filename: filename,
+        contentType: contentType,
+      ),
+    );
+  }
+
   int get queueLength => _queue.length;
 
   @override
@@ -36,7 +68,23 @@ class FakeHttpClientAdapter implements HttpClientAdapter {
   ) async {
     requests.add(options);
     if (error != null) throw error!;
-    if (_queue.isEmpty) {
+    if (_queueBytes.isNotEmpty) {
+      final next = _queueBytes.removeAt(0);
+      final headers = <String, List<String>>{
+        'content-type': [next.contentType],
+      };
+      if (next.filename != null) {
+        headers['content-disposition'] = [
+          'attachment; filename="${next.filename}"',
+        ];
+      }
+      return ResponseBody.fromBytes(
+        next.bytes,
+        next.statusCode,
+        headers: headers,
+      );
+    }
+    if (_queue.isEmpty && _queueBytes.isEmpty) {
       throw StateError(
         'FakeHttpClientAdapter: tidak ada response ter-antre untuk '
         '${options.method} ${options.uri}',

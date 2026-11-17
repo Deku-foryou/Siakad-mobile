@@ -36,6 +36,16 @@ class ApiEnvelope {
     return msg is String && msg.trim().isNotEmpty ? msg.trim() : null;
   }
 
+  /// `meta` pagination bila ada (semua endpoint siswa mengirimnya;
+  /// endpoint keuangan TIDAK mengirim `from`/`to`).
+  static Map<String, dynamic>? meta(Response<dynamic> response) {
+    final body = _asMap(response.data);
+    final meta = body?['meta'];
+    if (meta is Map<String, dynamic>) return meta;
+    if (meta is Map) return Map<String, dynamic>.from(meta);
+    return null;
+  }
+
   static Map<String, dynamic>? _asMap(Object? raw) {
     if (raw is Map<String, dynamic>) return raw;
     if (raw is Map) return Map<String, dynamic>.from(raw);

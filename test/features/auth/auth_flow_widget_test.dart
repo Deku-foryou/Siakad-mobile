@@ -1,7 +1,3 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,40 +9,9 @@ import 'package:siakad_mobile/core/storage/secure_storage_service.dart';
 import 'package:siakad_mobile/shared/providers/core_providers.dart';
 
 import '../../fakes/fake_http_client_adapter.dart';
+import '../../fakes/path_adapter.dart';
 import '../../fakes/fake_secure_key_value_store.dart';
 import '../../fakes/harness.dart' show loginSuccessBody, meSuccessBody;
-
-/// Adapter yang menahan response sampai `gate` diselesaikan (untuk menguji
-/// loading state secara deterministik).
-class _GateAdapter implements HttpClientAdapter {
-  final Completer<ResponseBody> gate = Completer<ResponseBody>();
-  final List<RequestOptions> requests = [];
-
-  void respondJson(int statusCode, Object? body) {
-    gate.complete(
-      ResponseBody.fromString(
-        jsonEncode(body),
-        statusCode,
-        headers: const {
-          'content-type': ['application/json'],
-        },
-      ),
-    );
-  }
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) {
-    requests.add(options);
-    return gate.future;
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
 
 ProviderScope _app({
   required FakeSecureKeyValueStore store,
@@ -126,11 +91,11 @@ void main() {
     expect(passwordField().obscureText, isTrue);
   });
 
-  testWidgets('login sukses: loading tampil lalu diarahkan sesuai role', (
-    tester,
-  ) async {
+  testWidgets('login sukses: diarahkan ke area sesuai role', (tester) async {
     final store = FakeSecureKeyValueStore();
-    final adapter = _GateAdapter();
+    final adapter = PathAdapter(
+      overrides: {'/auth/login': (200, loginSuccessBody())},
+    );
 
     await tester.pumpWidget(_app(store: store, adapter: adapter));
     await tester.pumpAndSettle();
@@ -138,17 +103,15 @@ void main() {
     await tester.enterText(find.byType(TextFormField).first, 'siswa01');
     await tester.enterText(find.byType(TextFormField).last, 'rahasia');
     await tester.tap(find.widgetWithText(FilledButton, 'Masuk'));
-    await tester.pump(); // mulai request, tampilkan loading
-
-    expect(find.byType(CircularProgressIndicator), findsWidgets);
-
-    adapter.respondJson(200, loginSuccessBody());
     await tester.pumpAndSettle();
 
-    // Redirect otomatis ke /siswa (role dari backend).
-    expect(find.text('Area Siswa'), findsOneWidget);
-    expect(adapter.requests.single.path, '/auth/login');
-    expect((adapter.requests.single.data as Map)['username'], 'siswa01');
+    // Shell siswa tampil (bottom nav Beranda/Akademik/Keuangan/Notifikasi/Profil).
+    expect(find.text('Beranda'), findsWidgets);
+    expect(adapter.requests.any((r) => r.path == '/auth/login'), isTrue);
+    final loginRequest = adapter.requests.firstWhere(
+      (r) => r.path == '/auth/login',
+    );
+    expect((loginRequest.data as Map)['username'], 'siswa01');
   });
 
   testWidgets('login gagal: pesan backend ditampilkan', (tester) async {
@@ -221,17 +184,33 @@ void main() {
     final store = FakeSecureKeyValueStore();
     final storage = SecureStorageService(store);
     await storage.saveToken('1|tokenvalid');
-    final adapter = FakeHttpClientAdapter();
-    adapter.respondJson(200, meSuccessBody());
+    final adapter = PathAdapter();
 
     await tester.pumpWidget(_app(store: store, adapter: adapter));
     await tester.pumpAndSettle();
 
-    expect(find.text('Area Siswa'), findsOneWidget);
-    expect(find.text('Siswa Uji'), findsOneWidget);
+    // Buka tab Profil (informasi sesi ada di sana — mungkin di bawah lipatan).
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Profil Saya'), findsOneWidget);
+    expect(find.text('Siswa Uji'), findsWidgets);
     expect(find.text('@siswa01'), findsOneWidget);
+
+    // Seksi "Sesi Perangkat" berada di bawah — gulir sampai terlihat.
+    await tester.scrollUntilVisible(
+      find.text('Sesi aktif'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Sesi aktif'), findsOneWidget);
     expect(find.text('Flutter Android'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Logout Semua Perangkat'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Logout Semua Perangkat'), findsOneWidget);
   });
 
@@ -241,22 +220,31 @@ void main() {
     final store = FakeSecureKeyValueStore();
     final storage = SecureStorageService(store);
     await storage.saveToken('1|tokenvalid');
-    final adapter = FakeHttpClientAdapter();
-    adapter.respondJson(200, meSuccessBody()); // restore
+    final adapter = PathAdapter(
+      overrides: {
+        '/auth/logout': (
+          200,
+          {'success': true, 'message': 'Logout berhasil', 'data': null},
+        ),
+      },
+    );
 
     await tester.pumpWidget(_app(store: store, adapter: adapter));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Logout'));
+    await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Logout Perangkat Ini'),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Logout Perangkat Ini'));
     await tester.pumpAndSettle(); // dialog muncul
 
     expect(find.text('Keluar dari akun pada perangkat ini?'), findsOneWidget);
 
-    adapter.respondJson(200, {
-      'success': true,
-      'message': 'Logout berhasil',
-      'data': null,
-    });
     await tester.tap(find.widgetWithText(FilledButton, 'Logout'));
     await tester.pumpAndSettle();
 
@@ -270,16 +258,29 @@ void main() {
     final store = FakeSecureKeyValueStore();
     final storage = SecureStorageService(store);
     await storage.saveToken('1|tokenvalid');
-    final adapter = FakeHttpClientAdapter();
-    adapter.respondJson(200, meSuccessBody()); // restore
+    final adapter = PathAdapter(
+      overrides: {
+        '/auth/logout-all': (
+          200,
+          {
+            'success': true,
+            'message': 'Seluruh perangkat telah logout.',
+            'data': null,
+          },
+        ),
+      },
+    );
 
     await tester.pumpWidget(_app(store: store, adapter: adapter));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
 
     // Tombol logout-all berada di bagian bawah — gulir sampai terlihat.
     await tester.scrollUntilVisible(
       find.text('Logout Semua Perangkat'),
-      200,
+      150,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.tap(find.text('Logout Semua Perangkat'));
@@ -287,11 +288,6 @@ void main() {
 
     expect(find.textContaining('SEMUA perangkat'), findsOneWidget);
 
-    adapter.respondJson(200, {
-      'success': true,
-      'message': 'Seluruh perangkat telah logout.',
-      'data': null,
-    });
     await tester.tap(find.widgetWithText(FilledButton, 'Logout'));
     await tester.pumpAndSettle();
 
@@ -313,7 +309,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Anda Wajib Mengganti Password'), findsOneWidget);
-    expect(find.text('Area Siswa'), findsNothing);
+    expect(find.text('Profil'), findsNothing);
   });
 
   testWidgets('change password: konfirmasi tidak cocok menampilkan validasi', (

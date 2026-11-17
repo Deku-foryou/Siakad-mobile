@@ -32,21 +32,33 @@ lib/
 │   │   ├── dio_client.dart       # factory createDio() — SATU instance untuk semua fitur
 │   │   ├── auth_interceptor.dart # Sisip Bearer token; hapus sesi lokal saat 401
 │   │   ├── logging_interceptor.dart # Dev-only; tanpa token/body/header
-│   │   └── api_envelope.dart     # Pembaca envelope { success, message, data, ... }
+│   │   └── api_envelope.dart     # Pembaca envelope { success, message, data, meta? }
 │   ├── storage/
 │   │   ├── secure_key_value_store.dart  # Abstraksi + implementasi flutter_secure_storage
 │   │   └── secure_storage_service.dart  # Token + SessionMeta (save/read/clear)
-│   └── widgets/                  # AppLoading, AppErrorView, AppEmptyView
+│   ├── utils/formatters.dart     # tanggal (id), rupiah, status label/warna helper
+│   └── widgets/
+│       ├── app_loading.dart, app_error_view.dart, app_empty_view.dart
+│       └── app_widgets.dart      # AsyncValueView, SectionHeader, StatusBadge, InfoRow,
+│                                 # InfoCard, MenuCard, SkeletonBox
 ├── features/
-│   ├── auth/
+│   ├── auth/  (lihat §6)
+│   ├── siswa/                    # LENGKAP — lihat §12 (Siswa Module)
 │   │   ├── data/
-│   │   │   ├── auth_repository.dart          # POST /auth/login, /logout, /logout-all, /password, GET /auth/me
-│   │   │   └── models/                       # AuthUser, AuthSession, MeSession (fromJson manual)
+│   │   │   ├── models/           # page_meta, beranda, absensi, nilai, pengumuman,
+│   │   │   │                     # notifikasi, keuangan (manual fromJson)
+│   │   │   ├── siswa_repository.dart      # akademik + komunikasi siswa (read-only)
+│   │   │   ├── keuangan_repository.dart   # keuangan (K1–K11) + dokumen privat
+│   │   │   ├── private_document_service.dart # save bytes ke app-documents dir + open_filex
+│   │   │   └── paged_state.dart  # PagedResult/PageMeta bersama + PagedState
 │   │   ├── application/
-│   │   │   ├── auth_state.dart               # AuthStatus + AuthState
-│   │   │   └── auth_controller.dart          # AuthController (Riverpod Notifier)
-│   │   └── presentation/pages/                # splash_page, login_page, change_password_page
-│   ├── siswa/presentation/siswa_home_page.dart   # placeholder
+│   │   │   ├── siswa_providers.dart       # repository + FutureProviders (+ autoDispose.family)
+│   │   │   ├── paged_notifier.dart       # base PagedNotifier (halaman list generik)
+│   │   │   ├── absensi_notifiers.dart    # state absensi khusus (rekap + list)
+│   │   │   └── siswa_tab_index.dart      # SiswaTabIndex — index tab di shell
+│   │   └── presentation/
+│   │       ├── siswa_shell.dart           # Scaffold + NavigationBar (5 tab, IndexedStack)
+│   │       ├── beranda/  akademik/  keuangan/  notifikasi/  pengumuman/  profil/
 │   ├── guru/presentation/guru_home_page.dart     # placeholder
 │   └── wali/presentation/wali_home_page.dart     # placeholder
 └── shared/
@@ -211,9 +223,26 @@ Aturan:
 
 ## 8. Routing (GoRouter)
 
-Route: `/splash`, `/login`, `/change-password`, `/siswa`, `/guru`, `/wali`.
+Route utama:
+
+```
+/splash · /login · /change-password
+/siswa                                # shell siswa (NavigationBar: Beranda, Akademik,
+                                      # Keuangan, Notifikasi, Profil) — tab di IndexedStack
+/siswa/jadwal · /siswa/absensi · /siswa/nilai · /siswa/rapor
+/siswa/rapor/:semesterId/:kelasId
+/siswa/pengumuman · /siswa/pengumuman/:id · /siswa/notifikasi/:id
+/siswa/pembayaran · /siswa/pembayaran/:id · /siswa/tagihan/:id
+/siswa/pembayaran-attempt/:id
+/guru · /wali                         # placeholder
+```
+
 Initial: `/splash`. Redirect **murni & deterministik** (`resolveRedirect`),
 dengan `refreshListenable` yang dipicu perubahan `authStateProvider`.
+
+**Guard area berbasis PREFIX** (`AppRoutes.roleByAreaPrefix`): `/siswa`,
+`/siswa/jadwal`, dst. hanya untuk role siswa — begitu juga guru/wali.
+Sub-route area role lain → home sendiri.
 
 | State | Aturan redirect |
 |---|---|
@@ -221,7 +250,7 @@ dengan `refreshListenable` yang dipicu perubahan `authStateProvider`.
 | `sessionCheckFailed` | izinkan `/splash` & `/login`; lainnya → `/splash` |
 | `unauthenticated` | izinkan `/login`; lainnya → `/login` |
 | `authenticated` + `wajibGantiPassword` | paksa `/change-password` (satu-satunya halaman) |
-| `authenticated` | `/splash`,`/login`,`/change-password` → home role; area role lain → home sendiri |
+| `authenticated` | `/splash`,`/login`,`/change-password` → home role; area role lain (prefix) → home sendiri |
 
 Home role: `siswa → /siswa`, `guru → /guru`, `wali → /wali`.
 
@@ -260,7 +289,50 @@ flutter build apk --debug
 ## 11. Yang belum termasuk (by design)
 
 - Biometrik / lupa password / registrasi dari mobile.
-- Fitur bisnis siswa/guru/wali (baru placeholder: identitas + informasi sesi
-  + logout/logout-all).
+- Flow pembayaran Midtrans end-to-end (Snap) belum diuji — tidak ada kredensial
+  Sandbox; seluruh alur Attempt diuji lewat mock. Integrasi webhook tetap
+  server-to-server.
 - FCM/APNs, offline mutation, refresh token, admin/superadmin mobile.
+- Fitur guru & wali (masih placeholder).
 - iOS build belum diuji (butuh macOS + Xcode).
+- Preview/buka PDF dokumen privat memakai viewer bawaan perangkat
+  (`open_filex`), bukan viewer PDF di dalam aplikasi.
+
+## 12. Siswa Module (Phase 3)
+
+Area siswa berfitur penuh di atas `/auth/*` Phase 2:
+
+| Kelompok | Endpoint backend | Halaman/Route |
+|---|---|---|
+| Beranda | `GET /siswa/beranda` (+unread-count, ringkasan, pengumuman) | tab Beranda |
+| Profil | `GET /siswa/profil` (+info sesi lokal & logout) | tab Profil |
+| Jadwal | `GET /siswa/jadwal`, `GET /siswa/jadwal/hari-ini` | `/siswa/jadwal` |
+| Absensi | `GET /siswa/absensi/harian` · `/periode` · `/perjam` | `/siswa/absensi` |
+| Nilai | `GET /siswa/nilai` (rapor final saja) | `/siswa/nilai` |
+| Rapor | `GET /siswa/rapor`, `GET /siswa/rapor/{s}/{k}` | `/siswa/rapor`, detail |
+| Pengumuman | `GET /siswa/pengumuman`, `/pengumuman/{id}` (auto mark read) | `/siswa/pengumuman*` |
+| Notifikasi | `GET/PATCH /siswa/notifikasi*` (+`unread-count`, read-all) | tab Notifikasi |
+| Keuangan | `GET /keuangan/ringkasan` | tab Keuangan |
+| Tagihan | `GET /keuangan/tagihan`, `/tagihan/{id}` (create attempt) | detail |
+| Saldo | `GET /keuangan/saldo` | tab Keuangan |
+| Pembayaran | `GET /keuangan/pembayaran`, `/pembayaran/{id}` | `/siswa/pembayaran*` |
+| Attempt | `POST /keuangan/pembayaran/attempts`, `GET .../attempts/{id}` | dialog + `/siswa/pembayaran-attempt/:id` |
+| Dokumen | `GET /keuangan/pembayaran/{id}/bukti|kuitansi`, `GET /keuangan/refund/dokumen/{id}` | tombol di detail pembayaran |
+
+**Pola data:** satu-shot data via `FutureProvider.autoDispose(.family)`;
+list ter-paginasi via `NotifierProvider.autoDispose` + `PagedNotifier<T>`
+(`application/paged_notifier.dart` + `paged_state.dart`) — state `items/meta/
+busy/refreshing/error`, tombol "Muat Lebih Banyak". Absensi memakai state
+ringkasan khusus (`AbsensiListState`) karena response membawa `ringkasan`/
+`rekap_semester`/`rekap_total`.
+
+**Keuangan — aturan ketat:** attempt hanya mengirim `tagihan_id` (nominal
+selalu ditentukan server dari `total_tagihan`); UI tidak pernah menganggap
+attempt sebagai pembayaran; status transaksi selalu mengikuti response
+backend; dokumen privat diunduh via endpoint backend dengan Bearer token →
+`PrivateDocumentService` menyimpan di `<app-documents>/dokumen_privat/` →
+dibuka dengan `open_filex` (tidak ada URL publik yang dibangun sendiri).
+
+**Tidak ada business logic backend yang diduplikasi** (nilai akhir, rekap
+absensi, status tagihan dikonsumsi apa adanya) dan **tidak ada mutasi**
+ademik; siswa hanya bisa tandai notifikasi dibaca.

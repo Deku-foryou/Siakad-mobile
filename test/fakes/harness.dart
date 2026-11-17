@@ -70,6 +70,98 @@ Map<String, dynamic> loginSuccessBody({
   },
 };
 
+Map<String, dynamic> berandaSuccessBody({
+  String role = 'siswa',
+  bool wajibGantiPassword = false,
+}) => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'siswa': {
+      'id': 1280,
+      'nisn': '0012345678',
+      'nis': 'NIS001',
+      'nama': 'Siswa Uji',
+      'tahun_masuk': 2024,
+      'status': 'aktif',
+    },
+    'akun': {'username': 'siswa01', 'wajib_ganti_password': wajibGantiPassword},
+    'konteks': {
+      'valid': true,
+      'peringatan': <String>[],
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'kelas': [
+      {
+        'id': 99,
+        'nama': 'X-IPA-1',
+        'tingkat': 'X',
+        'jenis': 'Reguler',
+        'rombel': 'A',
+      },
+    ],
+    'nama_hari': 'Selasa',
+    'jadwal_hari_ini': <Map<String, dynamic>>[],
+  },
+};
+
+Map<String, dynamic> profilSuccessBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'id': 1280,
+    'nisn': '0012345678',
+    'nis': 'NIS001',
+    'nama': 'Siswa Uji',
+    'jenis_kelamin': 'L',
+    'tahun_masuk': 2024,
+    'status': 'aktif',
+    'kelas': [
+      {'id': 99, 'nama': 'X-IPA-1', 'tingkat': 'X'},
+    ],
+    'akun': {'username': 'siswa01', 'wajib_ganti_password': false},
+  },
+};
+
+Map<String, dynamic> ringkasanKeuanganBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'total_kewajiban': 1500000,
+    'total_dibayar': 500000,
+    'sisa_kewajiban': 1000000,
+    'saldo': 250000,
+  },
+};
+
+Map<String, dynamic> tagihanListBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': <Map<String, dynamic>>[],
+  'meta': {'current_page': 1, 'per_page': 15, 'last_page': 1, 'total': 0},
+};
+
+Map<String, dynamic> notifikasiListBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {'items': <Map<String, dynamic>>[], 'belum_dibaca': 0},
+  'meta': {
+    'current_page': 1,
+    'per_page': 15,
+    'last_page': 1,
+    'total': 0,
+    'from': null,
+    'to': null,
+  },
+};
+
+Map<String, dynamic> unreadCountBody({int count = 0}) => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {'belum_dibaca': count},
+};
+
 Map<String, dynamic> meSuccessBody({
   String role = 'siswa',
   bool wajibGantiPassword = false,

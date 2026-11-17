@@ -9,7 +9,10 @@ import 'app_routes.dart';
 /// - status `unauthenticated`    → wajib di /login (kecuali sudah di sana).
 /// - authenticated + wajib ganti password → wajib di /change-password.
 /// - authenticated tanpa kewajiban pw → splash/login/change-password diarahkan
-///   ke home role; area role lain dialihkan ke home sendiri.
+///   ke home role; area role lain (termasuk sub-route-nya) dialihkan ke home.
+///
+/// Area role cocok secara PREFIX: `/siswa`, `/siswa/jadwal`, dan seterusnya
+/// hanya untuk role siswa — dan begitu juga guru/wali.
 ///
 /// Catatan: route guard di Flutter HANYA untuk navigasi & UX. Otorisasi
 /// sesungguhnya selalu ditegakkan backend (middleware auth:sanctum +
@@ -42,7 +45,7 @@ String? resolveRedirect(AuthState auth, String location) {
       // Tidak wajib ganti password: area terlarang diarahkan ke home.
       if (atSplash || atLogin || atChangePassword) return home;
 
-      final areaRole = AppRoutes.roleByArea[location];
+      final areaRole = AppRoutes.roleByAreaPrefix(location);
       if (areaRole != null && areaRole != auth.role) return home;
 
       return null;
