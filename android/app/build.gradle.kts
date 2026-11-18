@@ -1,7 +1,22 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Konfigurasi signing release LOKAL (tidak pernah di-commit).
+// Buat android/key.properties berdasarkan key.properties.example dan sediakan
+// keystore di lokasi yang sama. JANGAN pernah commit key.properties / *.keystore / *.jks.
+val keyPropertiesFile = rootProject.file("key.properties")
+val hasReleaseSigning = keyPropertiesFile.exists()
+val keyProperties = Properties().apply {
+    if (hasReleaseSigning) keyPropertiesFile.inputStream().use { load(it) }
+}
+check(!hasReleaseSigning || keyProperties.getProperty("storeFile") != null) {
+    "android/key.properties ditemukan tetapi properti 'storeFile' tidak ada. " +
+        "Periksa formatnya (lihat android/key.properties.example)."
 }
 
 android {
@@ -15,25 +30,50 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Application ID existing installations — JANGAN diubah tanpa koordinasi rilis.
         applicationId = "com.example.siakad_mobile"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
-        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
-        // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
-        // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(keyProperties.getProperty("storeFile")!!)
+                storePassword = keyProperties.getProperty("storePassword")
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Signing BELUM tersedia: JANGAN diam-diam pakai debug key.
+                // `flutter build apk --release` / `appbundle` harus GAGAL JELAS
+                // dengan instruksi — bukan menghasilkan artefak release palsu.
+                // Konfigurasi debug tetap normal; hanya task release yang gagal.
+                gradle.taskGraph.whenReady {
+                    val wantsRelease = allTasks.any { task ->
+                        task.path.contains("Release", ignoreCase = true)
+                    }
+                    if (wantsRelease) {
+                        throw GradleException(
+                            "Release signing belum dikonfigurasi. " +
+                                "Buat android/key.properties dari key.properties.example, " +
+                                "sediakan keystore, lalu jalankan ulang " +
+                                "`flutter build apk --release` / `flutter build appbundle --release`. " +
+                                "Build debug (`flutter build apk --debug`) tidak terpengaruh. " +
+                                "Lihat docs/ANDROID_RELEASE_GUIDE.md.",
+                        )
+                    }
+                }
+            }
         }
     }
 }

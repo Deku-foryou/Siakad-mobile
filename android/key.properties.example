@@ -1,0 +1,19 @@
+# Contoh konfigurasi signing release untuk Android.
+# SALIN file ini menjadi `android/key.properties` dan ISI dengan nilai lokal
+# Anda. File `android/key.properties` dan keystore (*.jks / *.keystore)
+# TIDAK BOLEH di-commit ke Git.
+#
+# storeFile    — path keystore RELATIF terhadap direktori android/ (mis. release.jks di android/app/),
+#                atau path absolut.
+# storePassword, keyPassword, keyAlias — password & alias sesuai keytool Anda.
+#
+# Contoh (bukan nilai asli — jangan dipakai):
+# storeFile=siakad-release.jks
+# storePassword=GANTI_DENGAN_PASSWORD_ANDA
+# keyAlias=siakad-release
+# keyPassword=GANTI_DENGAN_PASSWORD_ANDA
+
+storeFile=GANTI_DENGAN_LOKASI_KEYSTORE
+storePassword=GANTI_DENGAN_PASSWORD_ANDA
+keyAlias=GANTI_DENGAN_ALIAS_ANDA
+keyPassword=GANTI_DENGAN_PASSWORD_ANDA

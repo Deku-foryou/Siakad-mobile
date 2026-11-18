@@ -1,8 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet WAJIB: seluruh fitur (akademik, keuangan, notifikasi)
+         berbicara ke backend REST API. Sebelumnya permission ini hanya ada
+         di manifest debug/profile, sehingga build release bisa kehilangan
+         akses jaringan tergantung plugin yang ikut ter-merge. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
-        android:label="siakad_mobile"
+        android:label="SIAKAD"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:usesCleartextTraffic="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -541,3 +541,57 @@ dinilai dari token (relasi verified + pembayaran milik anak tsb).
   pola sengaja; tidak disamakan dengan siswa/wali.
 - Pengumuman wali tidak tersedia (backend) — tidak diimplementasikan.
 - Tidak ada perubahan kebijakan token/session/authorization backend.
+
+## 16. Phase 7 — Final hardening & release preparation
+
+### 16.1 Keamanan (terverifikasi statis + 329 tests)
+
+- Auth: token HANYA di `flutter_secure_storage` (EncryptedSharedPreferences /
+  Keychain); tidak ada plaintext storage; token tidak pernah masuk UI/log;
+  `LoggingInterceptor` debug-only (method+path, tanpa header/body);
+  401 mid-session → sesi ditutup bersih + redirect `/login` (Phase 6).
+- Logout/logout-all membersihkan sesi lokal; change password → login ulang.
+- Pergantian akun: state non-autoDispose di-reset (`accountSessionResetProvider`).
+- Backup Android: `allowBackup=false`, `fullBackupContent=false`,
+  `dataExtractionRules` exclude seluruh domain (sharedpref/file/database/
+  external/root) — token tidak ikut ter-backup.
+- Tidak ada credential di source; tidak ada dependensi dengan fatal issue.
+
+### 16.2 Konfigurasi API & jaringan
+
+- `--dart-define=API_BASE_URL` — dev default `http://10.0.2.2:8000/api/v1`
+  (debug). **Build release/profile mewajibkan API_BASE_URL https://**; tanpa
+  itu aplikasi gagal saat startup dengan pesan jelas (bukan fallback ke
+  emulator). Escape hatch eksplisit: `API_ALLOW_HTTP_IN_RELEASE=true`
+  (LAN interim; bukan produksi).
+- Android release: `usesCleartextTraffic="false"`; debug manifest opt-in
+  `usesCleartextTraffic="true"` untuk backend lokal.
+- Prefix `/api/v1` tidak terduplikasi; `normalizeBaseUrl` memvalidasi
+  skema/host; URL production WAJIB HTTPS.
+
+### 16.3 Android release
+
+- Manifest utama: INTERNET eksplisit (sebelumnya hanya debug/profile) +
+  label "SIAKAD"; application ID `com.example.siakad_mobile` (tidak diubah).
+- Signing release via `android/key.properties` (git-ignored) → `signingConfigs.release`;
+  **tanpa key.properties, task release GAGAL JELAS** (bukan debug-key fallback).
+  Contoh: `android/key.properties.example`; panduan: `docs/ANDROID_RELEASE_GUIDE.md`.
+- Backup: rules XML exclude-all; `INTERNET` tunggal (tanpa permission spekulatif).
+- R8/shrinkResource: TIDAK diaktifkan (risiko tanpa bukti kebutuhan; open_filex
+  & secure_storage tidak butuh rules; keputusan dapat ditinjau saat uji perangkat).
+- Dart obfuscation: tidak diaktifkan (crash trace tetap terbaca); panduan
+  symbol map ada di release guide.
+- Application ID & `com.example.*`: dibiarkan (keputusan distribusi pemilik
+  aplikasi; penggantian = keputusan rilis).
+
+### 16.4 Testing
+
+329 automated tests lulus (Phase 6) + gate release di AppConfig diuji
+(analyze/test tetap bersih). Live backend & Midtrans Sandbox E2E: belum diuji —
+bukan bukti lulus.
+
+### 16.5 Batasan yang tersisa
+
+Lihat `LAPORAN_FLUTTER_PHASE_7_FINAL_HARDENING.md` dan
+`CHECKLIST_FINAL_UAT_RELEASE.md`: signing belum tersedia (release artifact
+terblokir), manual UAT fisik NOT TESTED, iOS belum dibangun (Windows).

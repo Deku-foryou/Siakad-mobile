@@ -41,5 +41,73 @@ void main() {
     test('environment key terdokumentasi', () {
       expect(AppConfig.baseUrlKey, 'API_BASE_URL');
     });
+
+    group('resolveBaseUrl (kebijakan build)', () {
+      test('debug: string kosong → default dev emulator', () {
+        expect(
+          AppConfig.resolveBaseUrl(
+            '',
+            release: false,
+            allowHttpInRelease: false,
+          ),
+          'http://10.0.2.2:8000/api/v1',
+        );
+      });
+
+      test('debug: URL eksplisit dipakai', () {
+        expect(
+          AppConfig.resolveBaseUrl(
+            'http://192.168.1.10:8000/api/v1/',
+            release: false,
+            allowHttpInRelease: false,
+          ),
+          'http://192.168.1.10:8000/api/v1',
+        );
+      });
+
+      test('release: URL wajib diisi', () {
+        expect(
+          () => AppConfig.resolveBaseUrl(
+            '',
+            release: true,
+            allowHttpInRelease: false,
+          ),
+          throwsStateError,
+        );
+      });
+
+      test('release: http ditolak', () {
+        expect(
+          () => AppConfig.resolveBaseUrl(
+            'http://api.sekolah.sch.id/api/v1',
+            release: true,
+            allowHttpInRelease: false,
+          ),
+          throwsStateError,
+        );
+      });
+
+      test('release: https diterima', () {
+        expect(
+          AppConfig.resolveBaseUrl(
+            'https://api.sekolah.sch.id/api/v1',
+            release: true,
+            allowHttpInRelease: false,
+          ),
+          'https://api.sekolah.sch.id/api/v1',
+        );
+      });
+
+      test('release: http hanya dengan escape hatch eksplisit', () {
+        expect(
+          AppConfig.resolveBaseUrl(
+            'http://192.168.1.10:8000/api/v1',
+            release: true,
+            allowHttpInRelease: true,
+          ),
+          'http://192.168.1.10:8000/api/v1',
+        );
+      });
+    });
   });
 }

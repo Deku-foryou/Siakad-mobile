@@ -7,6 +7,13 @@ import 'package:flutter/foundation.dart';
 /// password, cookie. Yang dicatat hanya method, path (tanpa query), status
 /// code, dan durasi — cukup untuk debugging tanpa membocorkan data.
 class LoggingInterceptor extends Interceptor {
+  LoggingInterceptor({void Function(String message)? logger})
+    : _logger = logger ?? _defaultLogger;
+
+  /// Logger dapat di-inject (dipakai test untuk memverifikasi tidak ada
+  /// kebocoran header/token ke output log).
+  final void Function(String message) _logger;
+
   static const String _startKey = 'siakad.http.start';
 
   @override
@@ -44,7 +51,9 @@ class LoggingInterceptor extends Interceptor {
     return -1;
   }
 
-  void _log(String message) {
+  void _log(String message) => _logger(message);
+
+  static void _defaultLogger(String message) {
     if (kDebugMode) debugPrint('[HTTP] $message');
   }
 }
