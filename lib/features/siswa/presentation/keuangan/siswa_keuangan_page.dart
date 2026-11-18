@@ -109,7 +109,7 @@ class SiswaKeuanganPage extends ConsumerWidget {
                 ),
               ),
               SizedBox(
-                height: 46,
+                height: 48,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -137,7 +137,7 @@ class SiswaKeuanganPage extends ConsumerWidget {
                   child: Center(child: CircularProgressIndicator()),
                 )
               else if (tagihan.error != null && tagihan.items.isEmpty)
-                _ErrorBlock(
+                AppErrorRetry(
                   message: tagihan.error!,
                   onRetry: () => tagNotifier.refresh(),
                 )
@@ -285,34 +285,6 @@ class _TagihanTile extends StatelessWidget {
           label: StatusBadge.labelOf(item.status),
           color: StatusBadge.forStatus(item.status),
         ),
-      ),
-    );
-  }
-}
-
-class _ErrorBlock extends StatelessWidget {
-  const _ErrorBlock({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        children: [
-          Icon(Icons.cloud_off_rounded, size: 48, color: scheme.error),
-          const SizedBox(height: AppSpacing.sm),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.md),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Coba Lagi'),
-          ),
-        ],
       ),
     );
   }

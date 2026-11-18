@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme/app_colors.dart';
+
 /// AsyncValueView — merender loading / error / data dari AsyncValue
 /// secara konsisten, dengan aksi retry.
 ///
@@ -98,6 +100,44 @@ class _ErrorBlock extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Error state inline standar (ikon + pesan + tombol retry) — dipakai
+/// untuk gagal-load dalam list/kartu. Versi full-screen adalah
+/// [AsyncValueView] dengan `onRetry`.
+class AppErrorRetry extends StatelessWidget {
+  const AppErrorRetry({
+    super.key,
+    required this.message,
+    required this.onRetry,
+    this.padding = const EdgeInsets.all(24),
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: padding,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.cloud_off_rounded, size: 48, color: scheme.error),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Coba Lagi'),
+          ),
+        ],
       ),
     );
   }
@@ -226,19 +266,19 @@ class StatusBadge extends StatelessWidget {
       case 'lunas':
       case 'success':
       case 'dibebaskan':
-        return const Color(0xFF15803D);
+        return AppColors.success;
       case 'sakit':
       case 'izin':
       case 'pending':
       case 'belum_dibayar':
-        return const Color(0xFFB45309);
+        return AppColors.warning;
       case 'alpha':
       case 'failed':
       case 'dibatalkan':
-        return const Color(0xFFB91C1C);
+        return AppColors.error;
       case 'created':
       case 'dibayar_sebagian':
-        return const Color(0xFF1D4ED8);
+        return AppColors.info;
       case 'expired':
         return const Color(0xFF6B7280);
       default:

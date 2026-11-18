@@ -78,6 +78,17 @@ class Formatters {
   static String persenHadir(String? value) =>
       (value == null || value.isEmpty) ? '-' : value;
 
+  /// Inisial nama (maks 2 huruf kapital) untuk avatar. Nama kosong → '?'.
+  static String initials(String? name) {
+    final parts = (name ?? '').trim().split(RegExp(r'\s+'));
+    final letters = parts
+        .where((p) => p.isNotEmpty)
+        .take(2)
+        .map((p) => p[0].toUpperCase())
+        .join();
+    return letters.isEmpty ? '?' : letters;
+  }
+
   static DateTime? _parseDate(String? value) {
     if (value == null || value.length < 10) return null;
     return DateTime.tryParse(value.substring(0, 10));

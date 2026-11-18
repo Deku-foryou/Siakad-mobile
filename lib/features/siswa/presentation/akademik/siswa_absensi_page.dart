@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
@@ -97,10 +100,10 @@ class _RekapCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _stat(context, 'Hadir', rekap.hadir, const Color(0xFF15803D)),
-                _stat(context, 'Sakit', rekap.sakit, const Color(0xFFB45309)),
-                _stat(context, 'Izin', rekap.izin, const Color(0xFFB45309)),
-                _stat(context, 'Alpha', rekap.alpha, const Color(0xFFB91C1C)),
+                _stat(context, 'Hadir', rekap.hadir, AppColors.success),
+                _stat(context, 'Sakit', rekap.sakit, AppColors.warning),
+                _stat(context, 'Izin', rekap.izin, AppColors.warning),
+                _stat(context, 'Alpha', rekap.alpha, AppColors.error),
               ],
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -172,42 +175,6 @@ class _AbsensiTile extends StatelessWidget {
   }
 }
 
-class _ErrorBlock extends StatelessWidget {
-  const _ErrorBlock({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_off_rounded, size: 48, color: scheme.error),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Gagal memuat data.',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Coba Lagi'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Kerangka list: loading/error/empty/refresh/load-more.
 class _ListScaffold<Item> extends StatelessWidget {
   const _ListScaffold({
@@ -232,7 +199,7 @@ class _ListScaffold<Item> extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (state.error != null && state.items.isEmpty) {
-      return _ErrorBlock(message: state.error!, onRetry: onRefresh);
+      return AppErrorRetry(message: state.error!, onRetry: onRefresh);
     }
     return RefreshIndicator(
       onRefresh: onRefresh,

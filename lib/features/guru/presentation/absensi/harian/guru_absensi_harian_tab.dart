@@ -60,7 +60,10 @@ class GuruAbsensiHarianTab extends ConsumerWidget {
             child: state.items.isEmpty && state.refreshing
                 ? const Center(child: CircularProgressIndicator())
                 : state.error != null && state.items.isEmpty
-                ? _ErrorBlock(message: state.error!, onRetry: notifier.refresh)
+                ? AppErrorRetry(
+                    message: state.error!,
+                    onRetry: notifier.refresh,
+                  )
                 : ListView(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     children: [
@@ -188,36 +191,5 @@ class GuruAbsensiHarianTab extends ConsumerWidget {
     if (selected != null && context.mounted) {
       context.push('/guru/absensi/harian/grid/$selected?tanggal=${iso(today)}');
     }
-  }
-}
-
-class _ErrorBlock extends StatelessWidget {
-  const _ErrorBlock({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_off_rounded, size: 48, color: scheme.error),
-            const SizedBox(height: AppSpacing.sm),
-            Text(message, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Coba Lagi'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

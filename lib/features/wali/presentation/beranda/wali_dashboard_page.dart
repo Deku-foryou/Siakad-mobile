@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -77,7 +80,10 @@ class _DashboardBody extends ConsumerWidget {
         InfoCard(
           child: Row(
             children: [
-              CircleAvatar(radius: 30, child: Text(_initials(data.name))),
+              CircleAvatar(
+                radius: 30,
+                child: Text(Formatters.initials(data.name)),
+              ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -158,21 +164,21 @@ class _DashboardBody extends ConsumerWidget {
               child: _MiniStat(
                 label: 'Terverifikasi',
                 value: '${data.ringkasan.jumlahAnak}',
-                color: const Color(0xFF15803D),
+                color: AppColors.success,
               ),
             ),
             Expanded(
               child: _MiniStat(
                 label: 'Menunggu',
                 value: '${data.ringkasan.jumlahMenunggu}',
-                color: const Color(0xFFB45309),
+                color: AppColors.warning,
               ),
             ),
             Expanded(
               child: _MiniStat(
                 label: 'Ditolak',
                 value: '${data.ringkasan.jumlahDitolak}',
-                color: const Color(0xFFB91C1C),
+                color: AppColors.error,
               ),
             ),
             Expanded(
@@ -305,16 +311,6 @@ class _DashboardBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
       ],
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 }
 

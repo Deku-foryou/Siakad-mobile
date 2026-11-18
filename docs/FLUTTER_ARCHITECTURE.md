@@ -480,3 +480,64 @@ dinilai dari token (relasi verified + pembayaran milik anak tsb).
 - Pengumuman wali: **TIDAK TERSEDIA** di backend → tidak ada halaman
   pengumuman untuk wali (bukan pekerjaan yang belum selesai, melainkan
   kontrak backend yang memang tidak menyediakannya).
+
+## 15. Phase 6 — Integrasi, UI/UX & Konsistensi
+
+### 15.1 Design system
+
+- Palet: `AppColors` seed teal (light) / teal 400 (dark) — Light & dark
+  Material 3 (`AppTheme.light/.dark`); tidak ada identitas visual baru.
+- Warna semantik tunggal: `AppColors.success/warning/error/info` dipakai
+  oleh `StatusBadge.forStatus` dan seluruh kode status (tidak ada hex inline
+  di fitur).
+- `AppSpacing` skala kelipatan 4 (`radius = 12`) — card/button/input radius
+  tunggal; touch target ≥ 48dp (FilledButton/OutlinedButton min height 48,
+  horizontal FilterChip rows 48).
+- Komponen reusable `core/widgets/`: `AsyncValueView` (loading/empty/error +
+  retry), `AppErrorRetry` (inline error + retry; menggantikan 5 salinan
+  `_ErrorBlock` di fitur), `AppEmptyView`, `AppErrorView`, `AppLoading`,
+  `SectionHeader`, `StatusBadge`, `InfoRow`, `InfoCard`, `MenuCard`,
+  `SkeletonBox`.
+- `Formatters.initials(nama)` — pengganti 13 salinan `_initials` di
+  dashboard/profil (siswa/guru/wali) untuk avatar inisial.
+- `role_placeholder_page.dart` dihapus (tidak dipakai sejak Phase 5).
+
+### 15.2 Konteks anak (wali) selalu terlihat
+
+- `AnakAppBarTitle` (widgets/child_switcher.dart) — judul 2 baris AppBar:
+  judul halaman + `Nama · Kelas` anak terpilih. Dipakai di sub-route akademik
+  (jadwal/absensi/nilai/rapor/rapor detail) dan finansial wali (riwayat
+  pembayaran, detail tagihan/pembayaran/attempt).
+- Identitas anak juga tampil di daftar anak, detail anak, beranda wali, dan
+  tab keuangan ("Data keuangan: <nama>").
+
+### 15.3 Sesi, logout & pergantian akun
+
+- `accountSessionResetProvider` (shared/application) — saat sesi berakhir
+  (logout / 401 / gagal ganti password), state non-autoDispose di-reset:
+  `selectedAnakIdProvider`, `siswaTabIndexProvider`, `guruTabIndexProvider`,
+  `waliTabIndexProvider`. Provider data autoDispose dibuang otomatis saat
+  layar lama dilepas → tidak ada data pengguna lama bocor ke pengguna baru.
+- 401 di TENGAH sesi: `AuthInterceptor` membersihkan token lokal +
+  `SessionExpiry.notify()` (broadcast stream) → `AuthController`
+  (`_handleSessionExpired`) menutup sesi bersih: state → unauthenticated
+  dengan notice "Sesi Anda telah berakhir. Silakan login kembali."; router
+  GoRouter otomatis diarahkan ke `/login`. (Sebelumnya hanya restore startup
+  yang tahu; perbaikan ini menutup celah UX, bukan mengubah kebijakan token.)
+- Logout perangkat ini / logout semua perangkat tetap sesuai Foundation
+  (server gagal pun sesi lokal dibersihkan).
+
+### 15.4 Aksesibilitas & responsive
+
+- Tombol ikon dilengkapi `tooltip` (login/change password/notifikasi/dll).
+- Semua pesan error pengguna berbahasa Indonesia, tanpa stack trace.
+- Widget test: theme light/dark, shared components, text scaling 1.5x–2x,
+  layar kecil (320x568) & besar (900x1200), dark mode, semantics bottom nav.
+- Manual UAT fisik: `CHECKLIST_UAT_ANDROID_PHASE_6.md` (12 bagian).
+
+### 15.5 Batasan by design
+
+- Guru: notifikasi hanya via ikon AppBar Beranda (bukan tab bottom nav) —
+  pola sengaja; tidak disamakan dengan siswa/wali.
+- Pengumuman wali tidak tersedia (backend) — tidak diimplementasikan.
+- Tidak ada perubahan kebijakan token/session/authorization backend.

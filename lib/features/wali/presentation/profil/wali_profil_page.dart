@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../application/wali_providers.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/application/auth_state.dart';
@@ -44,7 +45,7 @@ class WaliProfilPage extends ConsumerWidget {
                       CircleAvatar(
                         radius: 36,
                         child: Text(
-                          _initials(data.name),
+                          Formatters.initials(data.name),
                           style: textTheme.titleLarge,
                         ),
                       ),
@@ -139,16 +140,6 @@ class WaliProfilPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 
   Future<void> _confirmLogout(

@@ -74,7 +74,7 @@ class _GuruKelasPageState extends ConsumerState<GuruKelasPage> {
                     const SizedBox(height: AppSpacing.xs),
                   ],
                   SizedBox(
-                    height: 46,
+                    height: 48,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [

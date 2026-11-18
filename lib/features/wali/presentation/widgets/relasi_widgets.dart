@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/theme/app_colors.dart';
+
 import '../../../../core/widgets/app_widgets.dart';
 
 /// Label & warna status relasi wali↔anak (dari backend).
@@ -24,12 +26,12 @@ class RelasiStatus {
   static Color? color(String status) {
     switch (status) {
       case 'verified':
-        return const Color(0xFF15803D);
+        return AppColors.success;
       case 'pending':
-        return const Color(0xFFB45309);
+        return AppColors.warning;
       case 'rejected':
       case 'terminated':
-        return const Color(0xFFB91C1C);
+        return AppColors.error;
       default:
         return null;
     }

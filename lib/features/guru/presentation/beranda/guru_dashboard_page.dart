@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../application/guru_providers.dart';
 import '../../application/guru_tab_index.dart';
 import '../../data/models/guru.dart';
@@ -84,7 +85,10 @@ class _DashboardBody extends ConsumerWidget {
         InfoCard(
           child: Row(
             children: [
-              CircleAvatar(radius: 30, child: Text(_initials(data.nama))),
+              CircleAvatar(
+                radius: 30,
+                child: Text(Formatters.initials(data.nama)),
+              ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -282,16 +286,6 @@ class _DashboardBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
       ],
     );
-  }
-
-  String _initials(String? name) {
-    final parts = (name ?? '').trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 
   Widget _statCard(

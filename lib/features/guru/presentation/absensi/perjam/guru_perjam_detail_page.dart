@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_spacing.dart';
 import '../../../../../core/widgets/app_widgets.dart';
+import '../../../../../core/utils/formatters.dart';
 import '../../../application/guru_providers.dart';
 
 /// Detail record absensi per jam — `GET /guru/absensi/perjam/{id}`.
@@ -31,7 +32,9 @@ class GuruPerjamDetailPage extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(child: Text(_initials(item.siswa.nama))),
+                  CircleAvatar(
+                    child: Text(Formatters.initials(item.siswa.nama)),
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(child: Text(item.siswa.nama)),
                   StatusBadge(
@@ -84,15 +87,5 @@ class GuruPerjamDetailPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 }

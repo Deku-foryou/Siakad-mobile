@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants/app_constants.dart';
+import '../shared/application/account_session_reset.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
@@ -14,6 +15,8 @@ class SiakadApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Aktifkan listener reset lintas fitur saat sesi berakhir (see file).
+    ref.watch(accountSessionResetProvider);
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: AppConstants.appName,

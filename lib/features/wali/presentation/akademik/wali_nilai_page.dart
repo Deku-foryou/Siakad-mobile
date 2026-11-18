@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/errors/api_exception.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 import '../../../siswa/data/models/nilai.dart';
 
@@ -22,7 +26,7 @@ class WaliNilaiPage extends ConsumerWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Nilai Anak')),
+      appBar: AppBar(title: AnakAppBarTitle('Nilai Anak', siswaId: siswaId)),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async => ref.invalidate(
@@ -100,7 +104,7 @@ class _NilaiBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         if (activeFilter != null || allOptions.isNotEmpty)
           SizedBox(
-            height: 46,
+            height: 48,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
@@ -241,7 +245,7 @@ class _NilaiTile extends StatelessWidget {
             ),
             style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
-              color: tuntas ? const Color(0xFF15803D) : const Color(0xFFB91C1C),
+              color: tuntas ? AppColors.success : AppColors.error,
             ),
           ),
           if (item.nilaiKktp != null)

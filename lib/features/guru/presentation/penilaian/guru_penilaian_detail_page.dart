@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,7 +62,7 @@ class GuruPenilaianDetailPage extends ConsumerWidget {
                       if (d.terkunci)
                         const StatusBadge(
                           label: 'TERKUNCI',
-                          color: Color(0xFFB45309),
+                          color: AppColors.warning,
                         ),
                       if (!d.konfigurasiValid)
                         StatusBadge(

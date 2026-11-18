@@ -6,6 +6,7 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 import '../../../siswa/data/models/keuangan.dart';
 
@@ -21,7 +22,9 @@ class WaliPembayaranPage extends ConsumerWidget {
     final notifier = ref.read(waliPembayaranProvider(siswaId).notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Riwayat Pembayaran')),
+      appBar: AppBar(
+        title: AnakAppBarTitle('Riwayat Pembayaran', siswaId: siswaId),
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: notifier.refresh,

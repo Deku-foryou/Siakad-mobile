@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 
 /// Detail rapor final anak — `GET /wali/anak/{siswaId}/rapor/{semesterId}/{kelasId}`.
@@ -28,7 +32,7 @@ class WaliRaporDetailPage extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Rapor')),
+      appBar: AppBar(title: AnakAppBarTitle('Detail Rapor', siswaId: siswaId)),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async => ref.invalidate(
@@ -98,8 +102,8 @@ class WaliRaporDetailPage extends ConsumerWidget {
                                       data.nilai[i].nilaiKktp == null ||
                                           data.nilai[i].nilaiAkhir >=
                                               data.nilai[i].nilaiKktp!
-                                      ? const Color(0xFF15803D)
-                                      : const Color(0xFFB91C1C),
+                                      ? AppColors.success
+                                      : AppColors.error,
                                 ),
                               ),
                               if (data.nilai[i].nilaiKktp != null)

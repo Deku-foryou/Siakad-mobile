@@ -6,6 +6,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/errors/api_exception.dart';
 import '../../../core/storage/secure_storage_service.dart';
 import '../../../shared/providers/core_providers.dart';
+import '../../../core/network/session_expiry.dart';
 import '../data/auth_repository.dart';
 import '../data/models/me_session.dart';
 import 'auth_state.dart';
@@ -30,9 +31,24 @@ class AuthController extends Notifier<AuthState> {
   AuthState build() {
     _repository = ref.watch(authRepositoryProvider);
     _storage = ref.watch(secureStorageServiceProvider);
+    // 401 di tengah sesi (bukan saat restore/login): tutup sesi dengan benar.
+    // Subscription langsung ke broadcast stream; berhenti saat controller
+    // di-dispose (container dibongkar).
+    final subscription = SessionExpiry.stream.listen(
+      (_) => _handleSessionExpired(),
+    );
+    ref.onDispose(subscription.cancel);
     // Mulai pemulihan sesi setelah build selesai.
     Future.microtask(restoreSession);
     return const AuthState.unknown();
+  }
+
+  /// 401 mid-session (sinyal dari [AuthInterceptor]): tutup sesi bersih.
+  void _handleSessionExpired() {
+    if (state.status != AuthStatus.authenticated) return;
+    state = const AuthState.unauthenticated(
+      notice: 'Sesi Anda telah berakhir. Silakan login kembali.',
+    );
   }
 
   // ------------------------------------------------------------------

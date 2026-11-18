@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 import '../../../siswa/data/models/beranda.dart';
 
@@ -25,7 +26,7 @@ class WaliJadwalPage extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Jadwal Anak')),
+      appBar: AppBar(title: AnakAppBarTitle('Jadwal Anak', siswaId: siswaId)),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async => ref.invalidate(
@@ -36,7 +37,7 @@ class WaliJadwalPage extends ConsumerWidget {
             children: [
               // ------------------------------ Filter
               SizedBox(
-                height: 46,
+                height: 48,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [

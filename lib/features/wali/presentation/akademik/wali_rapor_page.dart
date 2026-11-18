@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 
 /// Daftar rapor final anak — `GET /wali/anak/{siswaId}/rapor`.
@@ -18,7 +19,7 @@ class WaliRaporPage extends ConsumerWidget {
     final rapor = ref.watch(anakRaporProvider(siswaId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Rapor Anak')),
+      appBar: AppBar(title: AnakAppBarTitle('Rapor Anak', siswaId: siswaId)),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async => ref.invalidate(anakRaporProvider(siswaId)),

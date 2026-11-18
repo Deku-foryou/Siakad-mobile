@@ -84,7 +84,10 @@ class _DashboardBody extends ConsumerWidget {
         InfoCard(
           child: Row(
             children: [
-              CircleAvatar(radius: 30, child: Text(_initials(siswa.nama))),
+              CircleAvatar(
+                radius: 30,
+                child: Text(Formatters.initials(siswa.nama)),
+              ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -240,16 +243,6 @@ class _DashboardBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.lg),
       ],
     );
-  }
-
-  String _initials(String? name) {
-    final parts = (name ?? '').trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 }
 

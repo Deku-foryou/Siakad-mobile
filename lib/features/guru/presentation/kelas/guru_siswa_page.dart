@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../application/guru_providers.dart';
 
 /// Daftar siswa aktif kelas — `GET /guru/kelas/{id}/siswa`.
@@ -48,7 +49,9 @@ class GuruSiswaPage extends ConsumerWidget {
                   Card(
                     margin: const EdgeInsets.only(bottom: AppSpacing.xs),
                     child: ListTile(
-                      leading: CircleAvatar(child: Text(_initials(s.nama))),
+                      leading: CircleAvatar(
+                        child: Text(Formatters.initials(s.nama)),
+                      ),
                       title: Text(s.nama),
                       subtitle: Text(
                         [
@@ -69,15 +72,5 @@ class GuruSiswaPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 }

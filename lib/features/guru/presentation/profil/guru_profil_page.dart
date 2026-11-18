@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../application/guru_providers.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/application/auth_state.dart';
@@ -44,7 +45,7 @@ class GuruProfilPage extends ConsumerWidget {
                       CircleAvatar(
                         radius: 36,
                         child: Text(
-                          _initials(data.nama),
+                          Formatters.initials(data.nama),
                           style: textTheme.titleLarge,
                         ),
                       ),
@@ -132,16 +133,6 @@ class GuruProfilPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final letters = parts
-        .where((p) => p.isNotEmpty)
-        .take(2)
-        .map((p) => p[0].toUpperCase())
-        .join();
-    return letters.isEmpty ? '?' : letters;
   }
 
   String _jk(String value) {

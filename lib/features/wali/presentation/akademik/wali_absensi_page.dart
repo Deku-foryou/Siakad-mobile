@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_empty_view.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_absensi_notifiers.dart';
 import '../../../siswa/data/models/absensi.dart';
 
@@ -21,7 +25,7 @@ class WaliAbsensiPage extends ConsumerWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Absensi Anak'),
+          title: AnakAppBarTitle('Absensi Anak', siswaId: siswaId),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Harian'),
@@ -55,7 +59,7 @@ class _StatusFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46,
+      height: 48,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
@@ -102,10 +106,10 @@ class _RekapCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 for (final pair in [
-                  ('Hadir', rekap.hadir, const Color(0xFF15803D)),
-                  ('Sakit', rekap.sakit, const Color(0xFFB45309)),
-                  ('Izin', rekap.izin, const Color(0xFFB45309)),
-                  ('Alpha', rekap.alpha, const Color(0xFFB91C1C)),
+                  ('Hadir', rekap.hadir, AppColors.success),
+                  ('Sakit', rekap.sakit, AppColors.warning),
+                  ('Izin', rekap.izin, AppColors.warning),
+                  ('Alpha', rekap.alpha, AppColors.error),
                 ])
                   Column(
                     children: [
@@ -166,7 +170,7 @@ class _HarianTab extends ConsumerWidget {
           if (state.items.isEmpty && state.refreshing)
             const Center(child: CircularProgressIndicator())
           else if (state.error != null && state.items.isEmpty)
-            _ErrorBlock(message: state.error!, onRetry: notifier.refresh)
+            AppErrorRetry(message: state.error!, onRetry: notifier.refresh)
           else if (state.items.isEmpty)
             const Padding(
               padding: EdgeInsets.all(AppSpacing.lg),
@@ -296,7 +300,7 @@ class _PeriodeTab extends ConsumerWidget {
             if (state.items.isEmpty && state.refreshing)
               const Center(child: CircularProgressIndicator())
             else if (state.error != null && state.items.isEmpty)
-              _ErrorBlock(message: state.error!, onRetry: notifier.refresh)
+              AppErrorRetry(message: state.error!, onRetry: notifier.refresh)
             else if (state.items.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(AppSpacing.lg),
@@ -397,7 +401,7 @@ class _PerjamTab extends ConsumerWidget {
           if (state.items.isEmpty && state.refreshing)
             const Center(child: CircularProgressIndicator())
           else if (state.error != null && state.items.isEmpty)
-            _ErrorBlock(message: state.error!, onRetry: notifier.refresh)
+            AppErrorRetry(message: state.error!, onRetry: notifier.refresh)
           else if (state.items.isEmpty)
             const Padding(
               padding: EdgeInsets.all(AppSpacing.lg),
@@ -486,34 +490,6 @@ class _AbsensiPerjamTile extends StatelessWidget {
           ].join('\n'),
         ),
         isThreeLine: true,
-      ),
-    );
-  }
-}
-
-class _ErrorBlock extends StatelessWidget {
-  const _ErrorBlock({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        children: [
-          Icon(Icons.cloud_off_rounded, size: 48, color: scheme.error),
-          const SizedBox(height: AppSpacing.sm),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: AppSpacing.md),
-          FilledButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Coba Lagi'),
-          ),
-        ],
       ),
     );
   }

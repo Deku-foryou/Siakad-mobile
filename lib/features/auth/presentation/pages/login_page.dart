@@ -225,6 +225,7 @@ class _Banner extends StatelessWidget {
           if (onDismiss != null)
             IconButton(
               visualDensity: VisualDensity.compact,
+              tooltip: 'Tutup',
               icon: Icon(Icons.close_rounded, size: 18, color: onColor),
               onPressed: onDismiss,
             ),

@@ -7,6 +7,7 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/errors/api_exception.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 import '../../../siswa/data/models/keuangan.dart';
 
@@ -39,7 +40,9 @@ class _WaliTagihanDetailPageState extends ConsumerState<WaliTagihanDetailPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Tagihan')),
+      appBar: AppBar(
+        title: AnakAppBarTitle('Detail Tagihan', siswaId: widget.siswaId),
+      ),
       body: SafeArea(
         child: detail.when(
           loading: () => const Center(child: CircularProgressIndicator()),

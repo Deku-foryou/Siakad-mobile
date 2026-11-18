@@ -41,7 +41,7 @@ class WaliNotifikasiPage extends ConsumerWidget {
             padding: const EdgeInsets.all(AppSpacing.md),
             children: [
               SizedBox(
-                height: 46,
+                height: 48,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [

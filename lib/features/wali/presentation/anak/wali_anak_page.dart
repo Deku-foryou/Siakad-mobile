@@ -110,7 +110,7 @@ class _AnakListBody extends ConsumerWidget {
           )
         else ...[
           SizedBox(
-            height: 46,
+            height: 48,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [

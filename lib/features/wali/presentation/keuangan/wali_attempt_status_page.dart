@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../widgets/child_switcher.dart';
 import '../../application/wali_providers.dart';
 
 /// Status payment attempt (K8) — hanya menampilkan status dari server.
@@ -24,7 +25,9 @@ class WaliAttemptStatusPage extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Status Pembayaran')),
+      appBar: AppBar(
+        title: AnakAppBarTitle('Status Pembayaran', siswaId: siswaId),
+      ),
       body: SafeArea(
         child: attempt.when(
           loading: () => const Center(child: CircularProgressIndicator()),

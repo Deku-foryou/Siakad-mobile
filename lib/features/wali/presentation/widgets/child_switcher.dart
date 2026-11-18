@@ -36,6 +36,7 @@ class ChildSwitcher extends ConsumerWidget {
       error: (error, _) => Tooltip(
         message: 'Gagal memuat daftar anak',
         child: IconButton(
+          tooltip: 'Gagal memuat daftar anak — coba lagi',
           icon: Icon(Icons.error_outline, color: scheme.error),
           onPressed: () => ref.invalidate(waliAnakListProvider),
         ),
@@ -69,6 +70,48 @@ class ChildSwitcher extends ConsumerWidget {
               if (id != null) onChanged(id);
             },
           ),
+        );
+      },
+    );
+  }
+}
+
+/// Judul AppBar dua baris: judul halaman + identitas anak terpilih
+/// (nama · kelas) agar konteks anak selalu terlihat di halaman akademik
+/// dan finansial wali. Menampilkan judul saja saat data belum siap.
+class AnakAppBarTitle extends ConsumerWidget {
+  const AnakAppBarTitle(this.title, {super.key, required this.siswaId});
+
+  final String title;
+  final int siswaId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final anakAsync = ref.watch(waliAnakListProvider);
+    final textTheme = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return anakAsync.when(
+      loading: () => Text(title),
+      error: (_, _) => Text(title),
+      data: (data) {
+        final matches = data.anak.where((a) => a.siswa?.id == siswaId);
+        if (matches.isEmpty) return Text(title);
+        final anak = matches.first;
+        final nama = anak.siswa?.nama;
+        final kelas = anak.kelas;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(title),
+            Text(
+              [?nama, ?kelas].join(' · '),
+              style: textTheme.bodySmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         );
       },
     );

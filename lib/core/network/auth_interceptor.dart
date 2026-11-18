@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../storage/secure_storage_service.dart';
+import 'session_expiry.dart';
 
 /// Menyisipkan header `Authorization: Bearer <token>` pada setiap request
 /// (bila token tersedia) dan menghapus token lokal bila server menjawab 401.
@@ -47,12 +48,14 @@ class AuthInterceptor extends Interceptor {
         !_isLoginPath(err.requestOptions.path)) {
       // Sanctum mengembalikan 401 untuk token kedaluwarsa/tidak valid.
       // Token lokal tidak lagi berguna — hapus agar request berikutnya
-      // tidak memakai token mati. Navigation ditangani oleh AuthController/router.
+      // tidak memakai token mati. Lalu beri sinyal agar AuthController
+      // menutup sesi secara bersih (state → unauthenticated).
       try {
         await _storage.clearSession();
       } catch (_) {
         // Jangan gagalkan pipeline error hanya karena pembersihan storage gagal.
       }
+      SessionExpiry.notify();
     }
     handler.next(err);
   }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_spacing.dart';
@@ -82,25 +85,25 @@ class SiswaRaporDetailPage extends ConsumerWidget {
                         context,
                         'Hadir',
                         data.rekapKehadiran.hadir,
-                        const Color(0xFF15803D),
+                        AppColors.success,
                       ),
                       _stat(
                         context,
                         'Sakit',
                         data.rekapKehadiran.sakit,
-                        const Color(0xFFB45309),
+                        AppColors.warning,
                       ),
                       _stat(
                         context,
                         'Izin',
                         data.rekapKehadiran.izin,
-                        const Color(0xFFB45309),
+                        AppColors.warning,
                       ),
                       _stat(
                         context,
                         'Alpha',
                         data.rekapKehadiran.alpha,
-                        const Color(0xFFB91C1C),
+                        AppColors.error,
                       ),
                     ],
                   ),

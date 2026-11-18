@@ -117,6 +117,9 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          tooltip: _obscureCurrent
+                              ? 'Tampilkan password'
+                              : 'Sembunyikan password',
                           onPressed: () => setState(
                             () => _obscureCurrent = !_obscureCurrent,
                           ),
@@ -140,6 +143,9 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          tooltip: _obscureNew
+                              ? 'Tampilkan password'
+                              : 'Sembunyikan password',
                           onPressed: () =>
                               setState(() => _obscureNew = !_obscureNew),
                         ),
@@ -170,6 +176,9 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                           ),
+                          tooltip: _obscureConfirm
+                              ? 'Tampilkan password'
+                              : 'Sembunyikan password',
                           onPressed: () => setState(
                             () => _obscureConfirm = !_obscureConfirm,
                           ),
