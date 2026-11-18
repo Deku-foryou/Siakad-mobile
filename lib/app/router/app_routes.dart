@@ -42,6 +42,22 @@ class AppRoutes {
   static const String guruNotifikasiDetail = '/guru/notifikasi/:id';
 
   static const String wali = '/wali';
+  static const String waliAnakDetail = '/wali/anak/:siswaId';
+  static const String waliJadwal = '/wali/anak/:siswaId/jadwal';
+  static const String waliAbsensi = '/wali/anak/:siswaId/absensi';
+  static const String waliNilai = '/wali/anak/:siswaId/nilai';
+  static const String waliRapor = '/wali/anak/:siswaId/rapor';
+  static const String waliRaporDetail =
+      '/wali/anak/:siswaId/rapor/:semesterId/:kelasId';
+  static const String waliNotifikasiDetail = '/wali/notifikasi/:id';
+  static const String waliPembayaran =
+      '/wali/anak/:siswaId/keuangan/pembayaran';
+  static const String waliTagihanDetail =
+      '/wali/anak/:siswaId/keuangan/tagihan/:id';
+  static const String waliPembayaranDetail =
+      '/wali/anak/:siswaId/keuangan/pembayaran/:id';
+  static const String waliAttemptDetail =
+      '/wali/anak/:siswaId/keuangan/pembayaran-attempt/:id';
 
   static const Map<String, String> _roleByArea = {
     siswa: 'siswa',

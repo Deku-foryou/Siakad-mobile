@@ -85,6 +85,41 @@ class PathAdapter implements HttpClientAdapter {
         },
       );
     }
+    // ---------------- Wali ----------------
+    if (normalized.contains('/wali/beranda')) {
+      return (200, waliBerandaBody());
+    }
+    if (normalized.contains('/wali/profil')) {
+      return (200, waliProfilBody());
+    }
+    if (normalized.contains('/wali/notifikasi/unread-count')) {
+      return (200, unreadCountBody(count: 3));
+    }
+    if (normalized.contains('/wali/notifikasi')) {
+      return (200, notifikasiListBody());
+    }
+    if (normalized.contains('/wali/anak/201/beranda')) {
+      return (200, waliAnakBerandaBody(siswaId: 201));
+    }
+    if (normalized.contains('/wali/anak/202/beranda')) {
+      return (200, waliAnakBerandaBody(siswaId: 202));
+    }
+    final anakDetailMatch = RegExp(r'/wali/anak/(\d+)$').firstMatch(normalized);
+    if (anakDetailMatch != null) {
+      final id = int.parse(anakDetailMatch.group(1)!);
+      final verified = id == 201;
+      return (
+        200,
+        waliAnakDetailBody(
+          siswaId: id,
+          statusHubungan: verified ? 'verified' : 'pending',
+          bisaAksesAkademik: verified,
+        ),
+      );
+    }
+    if (normalized.contains('/wali/anak')) {
+      return (200, waliAnakListBody());
+    }
     if (normalized.contains('/guru/beranda')) {
       return (200, guruBerandaBody());
     }

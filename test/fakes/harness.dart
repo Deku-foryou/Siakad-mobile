@@ -533,3 +533,187 @@ Map<String, dynamic> guruNotifikasiBody() => {
     'to': 1,
   },
 };
+
+Map<String, dynamic> waliProfilBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'id': 881,
+    'name': 'Wali Uji',
+    'username': 'wali01',
+    'email': 'wali@example.test',
+    'status_akun': 'aktif',
+    'wajib_ganti_password': false,
+    'relasi': {'verified': 2, 'pending': 1, 'rejected': 0, 'terminated': 0},
+  },
+};
+
+Map<String, dynamic> waliBerandaBody() => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'user': {'id': 881, 'name': 'Wali Uji', 'username': 'wali01'},
+    'akun': {'username': 'wali01', 'wajib_ganti_password': false},
+    'konteks': {
+      'valid': true,
+      'peringatan': <String>[],
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'anak': [
+      {
+        'id': 201,
+        'nisn': '0011111111',
+        'nis': 'NIS201',
+        'nama': 'Andi Anak',
+        'kelas': 'X-IPA-1',
+      },
+      {
+        'id': 202,
+        'nisn': '0022222222',
+        'nis': 'NIS202',
+        'nama': 'Budi Anak',
+        'kelas': 'VIII-A',
+      },
+    ],
+    'ringkasan': {
+      'jumlah_anak': 2,
+      'jumlah_menunggu': 1,
+      'jumlah_ditolak': 0,
+      'jumlah_berakhir': 0,
+      'notifikasi_belum_dibaca': 3,
+    },
+    'nama_hari': 'Selasa',
+  },
+};
+
+Map<String, dynamic> waliAnakListBody({
+  List<Map<String, dynamic>>? anak,
+  bool konteksValid = true,
+}) => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'konteks': {
+      'valid': konteksValid,
+      'peringatan': <String>[],
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'anak':
+        anak ??
+        [
+          {
+            'relasi_id': 501,
+            'hubungan': 'ayah',
+            'status_hubungan': 'verified',
+            'tanggal_mulai': '2026-07-01',
+            'tanggal_berhenti': null,
+            'tanggal_verifikasi': '2026-07-05T08:00:00+07:00',
+            'bisa_akses_akademik': true,
+            'kelas': 'X-IPA-1',
+            'siswa': {
+              'id': 201,
+              'nisn': '0011111111',
+              'nis': 'NIS201',
+              'nama': 'Andi Anak',
+              'jenis_kelamin': 'L',
+              'tahun_masuk': 2024,
+              'status': 'aktif',
+            },
+          },
+          {
+            'relasi_id': 502,
+            'hubungan': 'ibu',
+            'status_hubungan': 'pending',
+            'tanggal_mulai': '2026-09-01',
+            'tanggal_berhenti': null,
+            'tanggal_verifikasi': null,
+            'bisa_akses_akademik': false,
+            'kelas': 'VIII-A',
+            'siswa': {
+              'id': 202,
+              'nisn': '0022222222',
+              'nis': 'NIS202',
+              'nama': 'Budi Anak',
+              'jenis_kelamin': 'L',
+              'tahun_masuk': 2025,
+              'status': 'aktif',
+            },
+          },
+        ],
+  },
+};
+
+Map<String, dynamic> waliAnakDetailBody({
+  int siswaId = 201,
+  String statusHubungan = 'verified',
+  bool bisaAksesAkademik = true,
+}) => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'relasi_id': 501,
+    'hubungan': 'ayah',
+    'status_hubungan': statusHubungan,
+    'tanggal_mulai': '2026-07-01',
+    'tanggal_berhenti': statusHubungan == 'terminated' ? '2026-10-01' : null,
+    'tanggal_verifikasi': '2026-07-05T08:00:00+07:00',
+    'bisa_akses_akademik': bisaAksesAkademik,
+    'kelas': 'X-IPA-1',
+    'siswa': {
+      'id': siswaId,
+      'nisn': '0011111111',
+      'nis': 'NIS201',
+      'nama': 'Andi Anak',
+      'jenis_kelamin': 'L',
+      'tahun_masuk': 2024,
+      'status': 'aktif',
+    },
+    'histori': [
+      {
+        'event': 'verifikasi',
+        'status_sebelum': 'pending',
+        'status_sesudah': 'verified',
+        'aktor_peran': 'admin',
+        'alasan': null,
+        'tanggal_mulai_sesudah': '2026-07-01',
+        'tanggal_berhenti_sesudah': null,
+        'created_at': '2026-07-05 08:00:00',
+      },
+    ],
+  },
+};
+
+Map<String, dynamic> waliAnakBerandaBody({int siswaId = 201}) => {
+  'success': true,
+  'message': 'Berhasil',
+  'data': {
+    'siswa': {
+      'id': siswaId,
+      'nisn': '0011111111',
+      'nis': 'NIS201',
+      'nama': 'Andi Anak',
+      'tahun_masuk': 2024,
+      'status': 'aktif',
+    },
+    'akun': {'username': 'andi01', 'wajib_ganti_password': false},
+    'konteks': {
+      'valid': true,
+      'peringatan': <String>[],
+      'tahun_ajaran': {'id': 10, 'nama': 'TA-2026/2027'},
+      'semester': {'id': 11, 'nama': 'Ganjil'},
+    },
+    'kelas': [
+      {
+        'id': 99,
+        'nama': 'X-IPA-1',
+        'tingkat': 'X',
+        'jenis': 'Reguler',
+        'rombel': 'A',
+      },
+    ],
+    'nama_hari': 'Selasa',
+    'jadwal_hari_ini': <Map<String, dynamic>>[],
+  },
+};

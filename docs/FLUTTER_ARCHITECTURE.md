@@ -386,3 +386,97 @@ Area guru berfitur penuh di atas kontrak `/api/v1/guru/*`:
 - Bottom navigation 5 tab dengan `IndexedStack` (state preserved); notifikasi
   via icon AppBar Beranda dengan badge unread.
 - Shell guru memakai prefix guard `/guru/*` (area role lain → home sendiri).
+
+## 14. Wali Module (Phase 5)
+
+Area wali berfitur penuh di atas kontrak `/api/v1/wali/*` (role `wali`,
+`api.role:wali` + `api.akun` + `api.password`) dan grup `/api/v1/keuangan/*`
+(role `siswa,wali`). Untuk wali, SEMUA endpoint keuangan JSON mewajibkan
+`siswa_id` (query GET / body POST attempt) dan backend menegakkan relasi
+verified. Endpoint dokumen privat TIDAK menerima parameter — ownership
+dinilai dari token (relasi verified + pembayaran milik anak tsb).
+
+### 14.1 Endpoint yang dipakai
+
+| Kelompok | Endpoint backend | Halaman/Route |
+|---|---|---|
+| Profil | `GET /wali/profil` | tab Profil |
+| Beranda | `GET /wali/beranda` | tab Beranda |
+| Daftar anak | `GET /wali/anak` | tab Anak |
+| Detail anak | `GET /wali/anak/{siswaId}` | `/wali/anak/:siswaId` |
+| Beranda anak | `GET /wali/anak/{siswaId}/beranda` | Detail anak (konteks akademik) |
+| Jadwal | `GET /wali/anak/{siswaId}/jadwal` (`hari`/`tanggal`), `GET .../jadwal/hari-ini` | `/wali/anak/:siswaId/jadwal` |
+| Absensi | `GET .../absensi/harian`, `GET .../absensi/periode`, `GET .../absensi/perjam` | `/wali/anak/:siswaId/absensi` |
+| Nilai | `GET .../nilai` (`semester_id`/`kelas_id` opsional) | `/wali/anak/:siswaId/nilai` |
+| Rapor | `GET .../rapor`, `GET .../rapor/{semesterId}/{kelasId}` | `/wali/anak/:siswaId/rapor`, `/wali/anak/:siswaId/rapor/:semesterId/:kelasId` |
+| Notifikasi | `GET /wali/notifikasi`, `GET /wali/notifikasi/unread-count`, `GET /wali/notifikasi/{id}`, `PATCH /wali/notifikasi/{id}/read`, `PATCH /wali/notifikasi/read-all` | tab Notifikasi, `/wali/notifikasi/:id` |
+| Keuangan | `GET /keuangan/ringkasan`, `GET /keuangan/tagihan[?status]`, `GET /keuangan/tagihan/{id}`, `GET /keuangan/saldo`, `GET /keuangan/pembayaran`, `GET /keuangan/pembayaran/{id}`, `POST /keuangan/pembayaran/attempts`, `GET /keuangan/pembayaran/attempts/{id}`, `GET /keuangan/pembayaran/{id}/bukti`, `GET /keuangan/pembayaran/{id}/kuitansi`, `GET /keuangan/refund/dokumen/{id}` | tab Keuangan, `/wali/anak/:siswaId/keuangan/*` |
+
+`POST /wali/anak/{siswaId}/permintaan-putus` (W5) **tidak diimplementasikan**
+(di luar scope Phase 5). Pengumuman wali **tidak tersedia** di backend
+(modul pengumuman siswa-scoped) — wali hanya punya notifikasi.
+
+### 14.2 Konteks anak & isolasi cache
+
+- Sub-halaman akademik/keuangan anak memakai `:siswaId` pada **route param**
+  (eksplisit, deep-linkable, tidak ambigu).
+- Seluruh provider child-scoped adalah `.family` keyed by `siswaId`
+  (`FutureProvider.autoDispose.family` untuk one-shot; notifier family
+  `.family` dengan konstruktor `Notifier(this.siswaId)` — pola family
+  Riverpod 3) → cache anak A tidak pernah tertukar dengan anak B;
+  state lama dilepas otomatis (autoDispose) saat tidak ada watcher.
+- Tab shell (Beranda/Keuangan) memakai `waliAnakAktifProvider` (turunan dari
+  daftar anak + pilihan eksplisit in-memory `selectedAnakIdProvider`):
+  hanya anak dengan `bisa_akses_akademik == true` (verdict backend) yang
+  eligible; pilihan eksplisit anak pending/rejected/terminated diabaikan
+  (fallback ke anak verified pertama menurut urutan backend); null bila
+  tidak ada anak verified → UI menampilkan empty-state informatif.
+- Pemilihan anak TIDAK dipersistenkan; sesi baru mulai dari default backend.
+- Ganti anak → provider family baru → fetch baru dari jaringan; tidak ada
+  data "pinjaman" dari cache anak sebelumnya.
+- Notifier family per anak dipakai untuk absensi (harian/periode/perjam),
+  tagihan (dengan filter status) dan pembayaran (paginated).
+
+### 14.3 Relasi wali↔anak
+
+- Backend adalah otoritas akses: relasi `verified` + `tanggal_berhenti IS NULL`
+  (+ `tanggal_mulai <= hari ini` untuk akademik). Flutter TIDAK menghitung
+  ulang kebijakan ini — hanya merender `bisa_akses_akademik` dari payload
+  backend dan menghormati 403 `AKSES_DITOLAK` (error view + pesan backend).
+- Relasi pending/rejected/terminated: tab Anak menampilkan seluruh relasi
+  (filter Semua/Terverifikasi/Menunggu/Ditolak/Berakhir) dengan badge status;
+  Detail anak menampilkan `RelasiTerkunciBanner` dan TIDAK merender menu
+  akademik/keuangan (provider anak-beranda baru dipanggil saat akses ada).
+- Tanpa anak verified: Beranda menampilkan status "Belum Ada Relasi Anak",
+  tab Keuangan menampilkan `PilihAnakKosong`, quick action akademik
+  dinonaktifkan. Tidak ada data akademik/finansial palsu yang ditampilkan.
+- Detail anak menampilkan histori relasi (append-only, read-only).
+
+### 14.4 Keamanan
+
+- Route guard prefix `/wali/*` (role siswa/guru ditolak → home masing-masing;
+  role wali ditolak dari `/siswa/*` & `/guru/*`); nested routes otomatis
+  terlindungi karena pencocokan prefix; guard autentikasi tidak diubah.
+- `WaliRepository` TIDAK PERNAH mengirim `user_id`; identitas dari token.
+  `siswaId` hanya path parameter yang divalidasi backend tiap request.
+- Keuangan wali: `siswa_id` divalidasi backend (relasi verified) tiap request.
+- Dokumen privat (bukti/kuitansi/refund) diunduh lewat endpoint backend
+  (ownership server-side) → disimpan di folder dokumen aplikasi (BUKAN
+  penyimpanan publik) via `PrivateDocumentService` → dibuka via `open_filex`.
+  URL dokumen tidak pernah dipublikasikan.
+- Payment attempt: client hanya mengirim `tagihan_id` + `siswa_id`; nominal
+  SELALU dari server; status settlement tidak pernah di-set dari client;
+  `snap_token`/`snap_redirect_url` hanya dibuka via url_launcher.
+- Tidak ada mutasi akademik; notifikasi hanya tandai dibaca; badge
+  diperbarui setelah aksi (invalidate unread-count).
+- Log HTTP tidak pernah mencatat token/dokumen.
+
+### 14.5 Notifikasi & pengumuman
+
+- Notifikasi wali = modul notifikasi (user-scoped — BUKAN per anak):
+  list/detail/unread-count/mark-read/read-all; badge unread di shell
+  (Notifikasi tab) & beranda; refresh badge setelah aksi mark-all-read
+  maupun mark-read.
+- Pengumuman wali: **TIDAK TERSEDIA** di backend → tidak ada halaman
+  pengumuman untuk wali (bukan pekerjaan yang belum selesai, melainkan
+  kontrak backend yang memang tidak menyediakannya).

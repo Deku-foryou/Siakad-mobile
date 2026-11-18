@@ -35,7 +35,18 @@ import '../../features/siswa/presentation/pengumuman/siswa_pengumuman_detail_pag
 import '../../features/siswa/presentation/pengumuman/siswa_pengumuman_page.dart';
 import '../../features/siswa/presentation/notifikasi/siswa_notifikasi_detail_page.dart';
 import '../../features/siswa/presentation/siswa_shell.dart';
-import '../../features/wali/presentation/wali_home_page.dart';
+import '../../features/wali/presentation/akademik/wali_absensi_page.dart';
+import '../../features/wali/presentation/akademik/wali_jadwal_page.dart';
+import '../../features/wali/presentation/akademik/wali_nilai_page.dart';
+import '../../features/wali/presentation/akademik/wali_rapor_detail_page.dart';
+import '../../features/wali/presentation/akademik/wali_rapor_page.dart';
+import '../../features/wali/presentation/anak/wali_anak_detail_page.dart';
+import '../../features/wali/presentation/keuangan/wali_attempt_status_page.dart';
+import '../../features/wali/presentation/keuangan/wali_pembayaran_detail_page.dart';
+import '../../features/wali/presentation/keuangan/wali_pembayaran_page.dart';
+import '../../features/wali/presentation/keuangan/wali_tagihan_detail_page.dart';
+import '../../features/wali/presentation/notifikasi/wali_notifikasi_detail_page.dart';
+import '../../features/wali/presentation/wali_shell.dart';
 import 'app_routes.dart';
 import 'redirect.dart';
 
@@ -303,7 +314,123 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.wali,
         name: 'wali',
-        builder: (context, state) => const WaliHomePage(),
+        builder: (context, state) => const WaliShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.waliAnakDetail,
+        name: 'wali-anak-detail',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliAnakDetailPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliJadwal,
+        name: 'wali-jadwal',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliJadwalPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliAbsensi,
+        name: 'wali-absensi',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliAbsensiPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliNilai,
+        name: 'wali-nilai',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliNilaiPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliRapor,
+        name: 'wali-rapor',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliRaporPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliRaporDetail,
+        name: 'wali-rapor-detail',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          final semesterId = _parseIntParam(state.pathParameters['semesterId']);
+          final kelasId = _parseIntParam(state.pathParameters['kelasId']);
+          if (siswaId == null || semesterId == null || kelasId == null) {
+            return const _InvalidParameterPage();
+          }
+          return WaliRaporDetailPage(
+            siswaId: siswaId,
+            semesterId: semesterId,
+            kelasId: kelasId,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliNotifikasiDetail,
+        name: 'wali-notifikasi-detail',
+        builder: (context, state) {
+          final id = _parseIntParam(state.pathParameters['id']);
+          if (id == null) return const _InvalidParameterPage();
+          return WaliNotifikasiDetailPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliPembayaran,
+        name: 'wali-pembayaran',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          if (siswaId == null) return const _InvalidParameterPage();
+          return WaliPembayaranPage(siswaId: siswaId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliTagihanDetail,
+        name: 'wali-tagihan-detail',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          final id = _parseIntParam(state.pathParameters['id']);
+          if (siswaId == null || id == null) {
+            return const _InvalidParameterPage();
+          }
+          return WaliTagihanDetailPage(siswaId: siswaId, id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliPembayaranDetail,
+        name: 'wali-pembayaran-detail',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          final id = _parseIntParam(state.pathParameters['id']);
+          if (siswaId == null || id == null) {
+            return const _InvalidParameterPage();
+          }
+          return WaliPembayaranDetailPage(siswaId: siswaId, id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.waliAttemptDetail,
+        name: 'wali-attempt-detail',
+        builder: (context, state) {
+          final siswaId = _parseIntParam(state.pathParameters['siswaId']);
+          final id = _parseIntParam(state.pathParameters['id']);
+          if (siswaId == null || id == null) {
+            return const _InvalidParameterPage();
+          }
+          return WaliAttemptStatusPage(siswaId: siswaId, id: id);
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -311,6 +438,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     ),
   );
 });
+
+/// Parse parameter path menjadi int positif; null bila tidak valid.
+int? _parseIntParam(String? raw) {
+  final value = int.tryParse(raw ?? '');
+  return (value != null && value > 0) ? value : null;
+}
 
 class _InvalidParameterPage extends StatelessWidget {
   const _InvalidParameterPage();
