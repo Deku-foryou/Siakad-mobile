@@ -20,7 +20,7 @@ check(!hasReleaseSigning || keyProperties.getProperty("storeFile") != null) {
 }
 
 android {
-    namespace = "com.example.siakad_mobile"
+    namespace = "com.apps.siakad"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         // Application ID existing installations — JANGAN diubah tanpa koordinasi rilis.
-        applicationId = "com.example.siakad_mobile"
+        applicationId = "com.apps.siakad"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

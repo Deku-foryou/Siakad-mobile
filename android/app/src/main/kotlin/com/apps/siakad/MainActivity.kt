@@ -1,4 +1,4 @@
-package com.example.siakad_mobile
+package com.apps.siakad
 
 import io.flutter.embedding.android.FlutterActivity
 
