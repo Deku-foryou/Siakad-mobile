@@ -1,3 +1,4 @@
+import '../../../../core/utils/json_cast.dart';
 import 'guru.dart';
 
 /// Absensi harian guru â€” `GuruAbsensiHarianResource`.
@@ -26,13 +27,13 @@ class GuruAbsensiHarianItem {
     final kelas = json['kelas'];
     final siswa = json['siswa'];
     return GuruAbsensiHarianItem(
-      id: (json['id'] as num?)?.toInt(),
+      id: JsonCast.intOrNull(json['id']),
       tanggal: json['tanggal']?.toString(),
       status: (json['status'] ?? '').toString(),
       catatan: json['catatan']?.toString(),
-      kelasId: (kelas is Map ? kelas['id'] as num? : null)?.toInt(),
+      kelasId: (kelas is Map ? JsonCast.intOrNull(kelas['id']) : null),
       kelasNama: kelas is Map ? kelas['nama']?.toString() : null,
-      siswaId: (siswa is Map ? siswa['id'] as num? : null)?.toInt(),
+      siswaId: (siswa is Map ? JsonCast.intOrNull(siswa['id']) : null),
       siswaNama: siswa is Map ? siswa['nama']?.toString() : null,
     );
   }
@@ -79,21 +80,21 @@ class GuruAbsensiPerjamItem {
   factory GuruAbsensiPerjamItem.fromJson(Map<String, dynamic> json) {
     final siswa = json['siswa'];
     return GuruAbsensiPerjamItem(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      jadwalPertemuanId: (json['jadwal_pertemuan_id'] as num?)?.toInt(),
+      id: JsonCast.intOrNull(json['id']) ?? 0,
+      jadwalPertemuanId: JsonCast.intOrNull(json['jadwal_pertemuan_id']),
       tanggal: json['tanggal']?.toString(),
-      hari: (json['hari'] as num?)?.toInt(),
+      hari: JsonCast.intOrNull(json['hari']),
       namaHari: json['nama_hari']?.toString(),
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       waktuMulai: json['waktu_mulai']?.toString(),
       waktuSelesai: json['waktu_selesai']?.toString(),
       status: (json['status'] ?? '').toString(),
       keterangan: json['keterangan']?.toString(),
       pertemuanStatus: json['pertemuan_status']?.toString(),
-      kelasId: (json['kelas_id'] as num?)?.toInt(),
+      kelasId: JsonCast.intOrNull(json['kelas_id']),
       kelasNama: json['kelas_nama']?.toString(),
       mapelNama: json['mapel_nama']?.toString(),
-      siswaId: (siswa is Map ? siswa['id'] as num? : null)?.toInt(),
+      siswaId: (siswa is Map ? JsonCast.intOrNull(siswa['id']) : null),
       siswaNama: siswa is Map ? siswa['nama']?.toString() : null,
     );
   }
@@ -118,7 +119,7 @@ class AbsensiHarianGrid {
     final raw = json['siswa'];
     return AbsensiHarianGrid(
       tanggal: (json['tanggal'] ?? '').toString(),
-      kelasId: (json['kelas_id'] as num?)?.toInt() ?? 0,
+      kelasId: JsonCast.intOrNull(json['kelas_id']) ?? 0,
       konteks: konteks is Map
           ? KonteksAkademik.fromJson(Map<String, dynamic>.from(konteks))
           : const KonteksAkademik(valid: false),
@@ -165,14 +166,14 @@ class AbsensiPerjamGrid {
     final kelas = json['kelas'];
     final mapel = json['mapel'];
     return AbsensiPerjamGrid(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       tanggal: (json['tanggal'] ?? '').toString(),
-      hari: (json['hari'] as num?)?.toInt(),
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      hari: JsonCast.intOrNull(json['hari']),
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       waktuMulai: json['waktu_mulai']?.toString(),
       waktuSelesai: json['waktu_selesai']?.toString(),
       status: (json['status'] ?? '').toString(),
-      bisaDiabsen: json['bisa_diabsen'] as bool? ?? false,
+      bisaDiabsen: JsonCast.boolOrNull(json['bisa_diabsen']) ?? false,
       kelas: kelas is Map
           ? KelasRingkas.fromJson(Map<String, dynamic>.from(kelas))
           : const KelasRingkas(id: 0, nama: '-'),
@@ -210,10 +211,10 @@ class GridSiswa {
   factory GridSiswa.fromJson(Map<String, dynamic> json) {
     final absensi = json['absensi'];
     return GridSiswa(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nisn: json['nisn']?.toString(),
       nama: (json['nama'] ?? '').toString(),
-      absensiId: (absensi is Map ? absensi['id'] as num? : null)?.toInt(),
+      absensiId: (absensi is Map ? JsonCast.intOrNull(absensi['id']) : null),
       absensiStatus: absensi is Map ? absensi['status']?.toString() : null,
       absensiCatatan: absensi is Map
           ? (absensi['catatan'] ?? absensi['keterangan'])?.toString()
@@ -268,11 +269,11 @@ class PertemuanItem {
     final kelas = json['kelas'];
     final mapel = json['mapel'];
     return PertemuanItem(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      jadwalKelasId: (json['jadwal_kelas_id'] as num?)?.toInt(),
+      id: JsonCast.intOrNull(json['id']) ?? 0,
+      jadwalKelasId: JsonCast.intOrNull(json['jadwal_kelas_id']),
       tanggal: (json['tanggal'] ?? '').toString(),
-      hari: (json['hari'] as num?)?.toInt() ?? 0,
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      hari: JsonCast.intOrNull(json['hari']) ?? 0,
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       waktuMulai: json['waktu_mulai']?.toString(),
       waktuSelesai: json['waktu_selesai']?.toString(),
       status: (json['status'] ?? '').toString(),
@@ -282,9 +283,9 @@ class PertemuanItem {
       mapel: mapel is Map
           ? MapelInfo.fromJson(Map<String, dynamic>.from(mapel))
           : const MapelInfo(nama: '-'),
-      jumlahSiswa: (json['jumlah_siswa'] as num?)?.toInt() ?? 0,
-      jumlahAbsensi: (json['jumlah_absensi'] as num?)?.toInt() ?? 0,
-      bisaDiabsen: json['bisa_diabsen'] as bool? ?? false,
+      jumlahSiswa: JsonCast.intOrNull(json['jumlah_siswa']) ?? 0,
+      jumlahAbsensi: JsonCast.intOrNull(json['jumlah_absensi']) ?? 0,
+      bisaDiabsen: JsonCast.boolOrNull(json['bisa_diabsen']) ?? false,
     );
   }
 }
@@ -326,13 +327,13 @@ class GuruAbsensiPerjamDetail {
     final mapel = json['mapel'];
     final siswa = json['siswa'];
     return GuruAbsensiPerjamDetail(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       status: (json['status'] ?? '').toString(),
       keterangan: json['keterangan']?.toString(),
-      jadwalPertemuanId: (json['jadwal_pertemuan_id'] as num?)?.toInt(),
+      jadwalPertemuanId: JsonCast.intOrNull(json['jadwal_pertemuan_id']),
       tanggal: json['tanggal']?.toString(),
-      hari: (json['hari'] as num?)?.toInt() ?? 0,
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      hari: JsonCast.intOrNull(json['hari']) ?? 0,
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       waktuMulai: json['waktu_mulai']?.toString(),
       waktuSelesai: json['waktu_selesai']?.toString(),
       pertemuanStatus: json['pertemuan_status']?.toString(),
@@ -371,7 +372,7 @@ class GuruAbsensiHarianDetail {
     final kelas = json['kelas'];
     final siswa = json['siswa'];
     return GuruAbsensiHarianDetail(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       tanggal: json['tanggal']?.toString(),
       status: (json['status'] ?? '').toString(),
       catatan: json['catatan']?.toString(),

@@ -1,3 +1,4 @@
+import '../../../../core/utils/json_cast.dart';
 import '../../../../shared/models/page_meta.dart';
 
 /// Item absensi harian — `AbsensiHarianResource` backend.
@@ -22,7 +23,7 @@ class AbsensiHarianItem {
       tanggal: json['tanggal']?.toString(),
       status: (json['status'] ?? '').toString(),
       catatan: json['catatan']?.toString(),
-      kelasId: (kelas is Map ? kelas['id'] as num? : null)?.toInt(),
+      kelasId: (kelas is Map ? JsonCast.intOrNull(kelas['id']) : null),
       kelasNama: kelas is Map ? kelas['nama']?.toString() : null,
     );
   }
@@ -61,9 +62,9 @@ class AbsensiPerjamItem {
   factory AbsensiPerjamItem.fromJson(Map<String, dynamic> json) =>
       AbsensiPerjamItem(
         tanggal: json['tanggal']?.toString(),
-        hari: (json['hari'] as num?)?.toInt(),
+        hari: JsonCast.intOrNull(json['hari']),
         namaHari: json['nama_hari']?.toString(),
-        jamKe: (json['jam_ke'] as num?)?.toInt(),
+        jamKe: JsonCast.intOrNull(json['jam_ke']),
         waktuMulai: json['waktu_mulai']?.toString(),
         waktuSelesai: json['waktu_selesai']?.toString(),
         status: (json['status'] ?? '').toString(),
@@ -95,11 +96,11 @@ class RekapAbsensi {
   final String? persenHadir;
 
   factory RekapAbsensi.fromJson(Map<String, dynamic> json) => RekapAbsensi(
-    total: (json['total'] as num?)?.toInt() ?? 0,
-    hadir: (json['hadir'] as num?)?.toInt() ?? 0,
-    sakit: (json['sakit'] as num?)?.toInt() ?? 0,
-    izin: (json['izin'] as num?)?.toInt() ?? 0,
-    alpha: (json['alpha'] as num?)?.toInt() ?? 0,
+    total: JsonCast.intOrNull(json['total']) ?? 0,
+    hadir: JsonCast.intOrNull(json['hadir']) ?? 0,
+    sakit: JsonCast.intOrNull(json['sakit']) ?? 0,
+    izin: JsonCast.intOrNull(json['izin']) ?? 0,
+    alpha: JsonCast.intOrNull(json['alpha']) ?? 0,
     persenHadir: json['persen_hadir']?.toString(),
   );
 

@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Item pengumuman siswa — `PengumumanResource` backend.
 class PengumumanItem {
   const PengumumanItem({
@@ -25,7 +27,7 @@ class PengumumanItem {
   final String? dibacaPada;
 
   factory PengumumanItem.fromJson(Map<String, dynamic> json) => PengumumanItem(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     judul: (json['judul'] ?? '').toString(),
     isi: json['isi']?.toString(),
     kategori: json['kategori']?.toString(),
@@ -33,7 +35,7 @@ class PengumumanItem {
     waktuTerbit: json['waktu_terbit']?.toString(),
     berlakuDari: json['berlaku_dari']?.toString(),
     berlakuSampai: json['berlaku_sampai']?.toString(),
-    dibaca: json['dibaca'] as bool? ?? false,
+    dibaca: JsonCast.boolOrNull(json['dibaca']) ?? false,
     dibacaPada: json['dibaca_pada']?.toString(),
   );
 }

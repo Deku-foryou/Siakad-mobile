@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Model penilaian guru — `penilaian/penugasan/*` backend.
 class KomponenNilai {
   const KomponenNilai({
@@ -13,10 +15,10 @@ class KomponenNilai {
   final int urutan;
 
   factory KomponenNilai.fromJson(Map<String, dynamic> json) => KomponenNilai(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nama: (json['nama'] ?? '').toString(),
-    bobot: (json['bobot'] as num?)?.toDouble() ?? 0,
-    urutan: (json['urutan'] as num?)?.toInt() ?? 0,
+    bobot: JsonCast.doubleOrNull(json['bobot']) ?? 0,
+    urutan: JsonCast.intOrNull(json['urutan']) ?? 0,
   );
 }
 
@@ -50,7 +52,7 @@ class PenugasanDetail {
     final mapel = json['mapel'];
     final komponenRaw = json['komponen'];
     return PenugasanDetail(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       semester: semester is Map
           ? SemesterPenilaian.fromJson(Map<String, dynamic>.from(semester))
           : const SemesterPenilaian(id: 0, nama: '-'),
@@ -60,7 +62,7 @@ class PenugasanDetail {
       mapel: mapel is Map
           ? MapelPenilaian.fromJson(Map<String, dynamic>.from(mapel))
           : const MapelPenilaian(id: 0, nama: '-'),
-      jumlahSiswa: (json['jumlah_siswa'] as num?)?.toInt() ?? 0,
+      jumlahSiswa: JsonCast.intOrNull(json['jumlah_siswa']) ?? 0,
       komponen: komponenRaw is List
           ? komponenRaw
                 .whereType<Map>()
@@ -69,9 +71,9 @@ class PenugasanDetail {
                 )
                 .toList()
           : const [],
-      totalBobotAktif: (json['total_bobot_aktif'] as num?)?.toDouble() ?? 0,
-      konfigurasiValid: json['konfigurasi_valid'] as bool? ?? false,
-      terkunci: json['terkunci'] as bool? ?? false,
+      totalBobotAktif: JsonCast.doubleOrNull(json['total_bobot_aktif']) ?? 0,
+      konfigurasiValid: JsonCast.boolOrNull(json['konfigurasi_valid']) ?? false,
+      terkunci: JsonCast.boolOrNull(json['terkunci']) ?? false,
     );
   }
 }
@@ -89,7 +91,7 @@ class SemesterPenilaian {
 
   factory SemesterPenilaian.fromJson(Map<String, dynamic> json) =>
       SemesterPenilaian(
-        id: (json['id'] as num?)?.toInt() ?? 0,
+        id: JsonCast.intOrNull(json['id']) ?? 0,
         nama: (json['nama'] ?? '').toString(),
         tahunAjaran: json['tahun_ajaran']?.toString(),
       );
@@ -103,7 +105,7 @@ class KelasPenilaian {
   final String? tingkat;
 
   factory KelasPenilaian.fromJson(Map<String, dynamic> json) => KelasPenilaian(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nama: (json['nama'] ?? '').toString(),
     tingkat: json['tingkat']?.toString(),
   );
@@ -117,7 +119,7 @@ class MapelPenilaian {
   final String nama;
 
   factory MapelPenilaian.fromJson(Map<String, dynamic> json) => MapelPenilaian(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     kode: json['kode']?.toString(),
     nama: (json['nama'] ?? '-').toString(),
   );
@@ -166,18 +168,18 @@ class SiswaPenilaian {
       });
     }
     return SiswaPenilaian(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nisn: json['nisn']?.toString(),
       nis: json['nis']?.toString(),
       nama: (json['nama'] ?? '').toString(),
       nilai: nilai,
-      nilaiDraft: (json['nilai_draft'] as num?)?.toDouble(),
-      lengkap: json['lengkap'] as bool? ?? false,
-      jumlahTerisi: (json['jumlah_terisi'] as num?)?.toInt() ?? 0,
-      jumlahKomponen: (json['jumlah_komponen'] as num?)?.toInt() ?? 0,
-      bobotTerisi: (json['bobot_terisi'] as num?)?.toDouble() ?? 0,
-      bobotTotal: (json['bobot_total'] as num?)?.toDouble() ?? 0,
-      konfigurasiValid: json['konfigurasi_valid'] as bool? ?? false,
+      nilaiDraft: JsonCast.doubleOrNull(json['nilai_draft']),
+      lengkap: JsonCast.boolOrNull(json['lengkap']) ?? false,
+      jumlahTerisi: JsonCast.intOrNull(json['jumlah_terisi']) ?? 0,
+      jumlahKomponen: JsonCast.intOrNull(json['jumlah_komponen']) ?? 0,
+      bobotTerisi: JsonCast.doubleOrNull(json['bobot_terisi']) ?? 0,
+      bobotTotal: JsonCast.doubleOrNull(json['bobot_total']) ?? 0,
+      konfigurasiValid: JsonCast.boolOrNull(json['konfigurasi_valid']) ?? false,
     );
   }
 }

@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 num? _numOf(Object? v) => v is num ? v : num.tryParse(v?.toString() ?? '');
 
 /// `GET /keuangan/ringkasan` — nominal integer rupiah.
@@ -44,7 +46,7 @@ class Tagihan {
   final String? jatuhTempo;
 
   factory Tagihan.fromJson(Map<String, dynamic> json) => Tagihan(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nama: (json['nama'] ?? '').toString(),
     nominal: _numOf(json['nominal']) ?? 0,
     terbayar: _numOf(json['terbayar']) ?? 0,
@@ -71,7 +73,7 @@ class Pembayaran {
   final String? dibayarPada;
 
   factory Pembayaran.fromJson(Map<String, dynamic> json) => Pembayaran(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nominal: _numOf(json['nominal']) ?? 0,
     metode: json['metode']?.toString(),
     status: (json['status'] ?? '').toString(),
@@ -99,7 +101,7 @@ class PaymentAttempt {
   final String? snapRedirectUrl;
 
   factory PaymentAttempt.fromJson(Map<String, dynamic> json) => PaymentAttempt(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     orderId: (json['order_id'] ?? '').toString(),
     nominal: _numOf(json['nominal']) ?? 0,
     status: (json['status'] ?? '').toString(),

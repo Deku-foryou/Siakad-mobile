@@ -200,14 +200,21 @@ class _AnakRelasiTile extends StatelessWidget {
           ),
         ),
         title: Text(siswa?.nama ?? '-', style: textTheme.titleSmall),
-        subtitle: Text(
-          [
-            if (siswa?.nis != null) 'NIS ${siswa?.nis}',
-            if (anak.kelas != null) anak.kelas!,
-            if (anak.hubungan != null) anak.hubungan!,
-          ].join(' · '),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              [
+                if (siswa?.nis != null) 'NIS ${siswa?.nis}',
+                if (anak.kelas != null) anak.kelas!,
+                if (anak.hubungan != null) anak.hubungan!,
+              ].join(' · '),
+            ),
+            const SizedBox(height: 6),
+            RelasiStatus.badge(anak.statusHubungan),
+          ],
         ),
-        trailing: RelasiStatus.badge(anak.statusHubungan),
       ),
     );
   }

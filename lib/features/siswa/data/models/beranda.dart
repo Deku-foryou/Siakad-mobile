@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Model untuk profil & beranda siswa (`GET /siswa/profil`, `GET /siswa/beranda`).
 class KelasAktif {
   const KelasAktif({
@@ -15,7 +17,7 @@ class KelasAktif {
   final String? rombel;
 
   factory KelasAktif.fromJson(Map<String, dynamic> json) => KelasAktif(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nama: (json['nama'] ?? '').toString(),
     tingkat: json['tingkat']?.toString(),
     jenis: json['jenis']?.toString(),
@@ -45,13 +47,13 @@ class KonteksAkademik {
     final semester = json['semester'];
     final peringatanRaw = json['peringatan'];
     return KonteksAkademik(
-      valid: json['valid'] as bool? ?? false,
+      valid: JsonCast.boolOrNull(json['valid']) ?? false,
       peringatan: peringatanRaw is List
           ? peringatanRaw.map((e) => e.toString()).toList()
           : const [],
-      tahunAjaranId: (ta is Map ? ta['id'] as num? : null)?.toInt(),
+      tahunAjaranId: (ta is Map ? JsonCast.intOrNull(ta['id']) : null),
       tahunAjaranNama: ta is Map ? ta['nama']?.toString() : null,
-      semesterId: (semester is Map ? semester['id'] as num? : null)?.toInt(),
+      semesterId: (semester is Map ? JsonCast.intOrNull(semester['id']) : null),
       semesterNama: semester is Map ? semester['nama']?.toString() : null,
     );
   }
@@ -87,12 +89,12 @@ class ProfilSiswa {
     final kelasRaw = json['kelas'];
     final akun = json['akun'];
     return ProfilSiswa(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nisn: json['nisn']?.toString(),
       nis: (json['nis'] ?? '').toString(),
       nama: (json['nama'] ?? '').toString(),
       jenisKelamin: json['jenis_kelamin']?.toString(),
-      tahunMasuk: (json['tahun_masuk'] as num?)?.toInt(),
+      tahunMasuk: JsonCast.intOrNull(json['tahun_masuk']),
       status: json['status']?.toString(),
       kelas: kelasRaw is List
           ? kelasRaw
@@ -102,7 +104,8 @@ class ProfilSiswa {
           : const [],
       akunUsername: akun is Map ? (akun['username'] ?? '-').toString() : '-',
       akunWajibGantiPassword:
-          akun is Map && (akun['wajib_ganti_password'] as bool? ?? false),
+          akun is Map &&
+          (JsonCast.boolOrNull(akun['wajib_ganti_password']) ?? false),
     );
   }
 }
@@ -143,15 +146,18 @@ class BerandaSiswa {
     final kelasRaw = json['kelas'];
     final jadwalRaw = json['jadwal_hari_ini'];
     return BerandaSiswa(
-      siswaId: (siswa is Map ? siswa['id'] as num? : null)?.toInt(),
+      siswaId: (siswa is Map ? JsonCast.intOrNull(siswa['id']) : null),
       nisn: siswa is Map ? siswa['nisn']?.toString() : null,
       nis: siswa is Map ? siswa['nis']?.toString() : null,
       nama: siswa is Map ? siswa['nama']?.toString() : null,
-      tahunMasuk: (siswa is Map ? siswa['tahun_masuk'] as num? : null)?.toInt(),
+      tahunMasuk: (siswa is Map
+          ? JsonCast.intOrNull(siswa['tahun_masuk'])
+          : null),
       status: siswa is Map ? siswa['status']?.toString() : null,
       akunUsername: akun is Map ? (akun['username'] ?? '-').toString() : '-',
       akunWajibGantiPassword:
-          akun is Map && (akun['wajib_ganti_password'] as bool? ?? false),
+          akun is Map &&
+          (JsonCast.boolOrNull(akun['wajib_ganti_password']) ?? false),
       konteks: json['konteks'] is Map
           ? KonteksAkademik.fromJson(
               Map<String, dynamic>.from(json['konteks'] as Map),
@@ -206,17 +212,17 @@ class JadwalItem {
     final mapel = json['mapel'];
     final guru = json['guru'];
     return JadwalItem(
-      hari: (json['hari'] as num?)?.toInt() ?? 0,
+      hari: JsonCast.intOrNull(json['hari']) ?? 0,
       namaHari: (json['nama_hari'] ?? '').toString(),
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       mulai: json['mulai']?.toString(),
       selesai: json['selesai']?.toString(),
-      mapelId: (mapel is Map ? mapel['id'] as num? : null)?.toInt(),
+      mapelId: (mapel is Map ? JsonCast.intOrNull(mapel['id']) : null),
       mapelKode: mapel is Map ? mapel['kode']?.toString() : null,
       mapelNama: mapel is Map ? (mapel['nama'] ?? '-').toString() : '-',
-      guruId: (guru is Map ? guru['id'] as num? : null)?.toInt(),
+      guruId: (guru is Map ? JsonCast.intOrNull(guru['id']) : null),
       guruNama: guru is Map ? guru['nama']?.toString() : null,
-      kelasId: (json['kelas_id'] as num?)?.toInt(),
+      kelasId: JsonCast.intOrNull(json['kelas_id']),
     );
   }
 }
@@ -241,7 +247,7 @@ class JadwalResponse {
     final jadwalRaw = json['jadwal'];
     return JadwalResponse(
       tanggal: json['tanggal']?.toString(),
-      hari: (json['hari'] as num?)?.toInt(),
+      hari: JsonCast.intOrNull(json['hari']),
       namaHari: json['nama_hari']?.toString(),
       konteks: json['konteks'] is Map
           ? KonteksAkademik.fromJson(

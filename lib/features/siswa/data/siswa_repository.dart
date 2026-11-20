@@ -1,3 +1,5 @@
+import '../../../core/utils/json_cast.dart';
+
 import 'package:dio/dio.dart';
 
 import '../../../core/errors/api_exception.dart';
@@ -239,7 +241,7 @@ class SiswaRepository {
   Future<int> unreadCount() => _guard(() async {
     final response = await _dio.get<dynamic>('/siswa/notifikasi/unread-count');
     final data = ApiEnvelope.dataObject(response);
-    return (data['belum_dibaca'] as num?)?.toInt() ?? 0;
+    return JsonCast.intOrNull(data['belum_dibaca']) ?? 0;
   });
 
   Future<NotifikasiItem> notifikasiDetail(int id) => _guard(() async {
@@ -258,8 +260,8 @@ class SiswaRepository {
     final response = await _dio.patch<dynamic>('/siswa/notifikasi/read-all');
     final data = ApiEnvelope.dataObject(response);
     return TandaiSemuaDibacaResult(
-      ditandai: (data['ditandai'] as num?)?.toInt() ?? 0,
-      belumDibaca: (data['belum_dibaca'] as num?)?.toInt() ?? 0,
+      ditandai: JsonCast.intOrNull(data['ditandai']) ?? 0,
+      belumDibaca: JsonCast.intOrNull(data['belum_dibaca']) ?? 0,
     );
   });
 

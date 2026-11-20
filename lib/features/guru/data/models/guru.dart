@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Model profil & beranda guru (`GET /guru/profil`, `GET /guru/beranda`).
 class KelasRingkas {
   const KelasRingkas({
@@ -42,7 +44,7 @@ class KelasRingkas {
     final wali = json['wali_kelas'];
     final sumberRaw = json['sumber'];
     return KelasRingkas(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nama: (json['nama'] ?? '').toString(),
       tingkat: json['tingkat']?.toString(),
       jenis: json['jenis']?.toString(),
@@ -50,12 +52,12 @@ class KelasRingkas {
       sumber: sumberRaw is List
           ? sumberRaw.map((e) => e.toString()).toList()
           : const [],
-      jumlahSiswa: (json['jumlah_siswa'] as num?)?.toInt(),
-      taId: (ta is Map ? ta['id'] as num? : null)?.toInt(),
+      jumlahSiswa: JsonCast.intOrNull(json['jumlah_siswa']),
+      taId: (ta is Map ? JsonCast.intOrNull(ta['id']) : null),
       taNama: ta is Map ? ta['nama']?.toString() : null,
-      jurusanId: (jurusan is Map ? jurusan['id'] as num? : null)?.toInt(),
+      jurusanId: (jurusan is Map ? JsonCast.intOrNull(jurusan['id']) : null),
       jurusanNama: jurusan is Map ? jurusan['nama']?.toString() : null,
-      waliId: (wali is Map ? wali['id'] as num? : null)?.toInt(),
+      waliId: (wali is Map ? JsonCast.intOrNull(wali['id']) : null),
       waliNama: wali is Map ? wali['nama']?.toString() : null,
       mapel: mapelRaw is List
           ? mapelRaw
@@ -75,7 +77,7 @@ class MapelInfo {
   final String nama;
 
   factory MapelInfo.fromJson(Map<String, dynamic> json) => MapelInfo(
-    id: (json['id'] as num?)?.toInt(),
+    id: JsonCast.intOrNull(json['id']),
     kode: json['kode']?.toString(),
     nama: (json['nama'] ?? '-').toString(),
   );
@@ -95,7 +97,7 @@ class MapelRef {
   final String? tahunAjaran;
 
   factory MapelRef.fromJson(Map<String, dynamic> json) => MapelRef(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     kode: json['kode']?.toString(),
     nama: (json['nama'] ?? '').toString(),
     tahunAjaran: json['tahun_ajaran']?.toString(),
@@ -137,7 +139,7 @@ class GuruProfil {
     final mapelRaw = json['mapel'];
     final akun = json['akun'];
     return GuruProfil(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nip: json['nip']?.toString(),
       kodeGuru: json['kode_guru']?.toString(),
       nama: (json['nama'] ?? '').toString(),
@@ -155,7 +157,8 @@ class GuruProfil {
           : const [],
       akunUsername: akun is Map ? (akun['username'] ?? '-').toString() : '-',
       akunWajibGantiPassword:
-          akun is Map && (akun['wajib_ganti_password'] as bool? ?? false),
+          akun is Map &&
+          (JsonCast.boolOrNull(akun['wajib_ganti_password']) ?? false),
     );
   }
 }
@@ -197,14 +200,15 @@ class GuruBeranda {
     final kelasRaw = json['kelas'];
     final jadwalRaw = json['jadwal_hari_ini'];
     return GuruBeranda(
-      id: (guru is Map ? guru['id'] as num? : null)?.toInt() ?? 0,
+      id: (guru is Map ? JsonCast.intOrNull(guru['id']) : null) ?? 0,
       nip: guru is Map ? guru['nip']?.toString() : null,
       kodeGuru: guru is Map ? guru['kode_guru']?.toString() : null,
       nama: (guru is Map ? guru['nama'] : null)?.toString() ?? '',
       status: guru is Map ? guru['status']?.toString() : null,
       akunUsername: akun is Map ? (akun['username'] ?? '-').toString() : '-',
       akunWajibGantiPassword:
-          akun is Map && (akun['wajib_ganti_password'] as bool? ?? false),
+          akun is Map &&
+          (JsonCast.boolOrNull(akun['wajib_ganti_password']) ?? false),
       konteks: konteks is Map
           ? KonteksAkademik.fromJson(Map<String, dynamic>.from(konteks))
           : const KonteksAkademik(valid: false),
@@ -246,13 +250,13 @@ class GuruRingkasan {
   final int absensiHarianHariIni;
 
   factory GuruRingkasan.fromJson(Map<String, dynamic> json) => GuruRingkasan(
-    jumlahKelas: (json['jumlah_kelas'] as num?)?.toInt() ?? 0,
-    jumlahPenugasan: (json['jumlah_penugasan'] as num?)?.toInt() ?? 0,
-    pertemuanHariIni: (json['pertemuan_hari_ini'] as num?)?.toInt() ?? 0,
+    jumlahKelas: JsonCast.intOrNull(json['jumlah_kelas']) ?? 0,
+    jumlahPenugasan: JsonCast.intOrNull(json['jumlah_penugasan']) ?? 0,
+    pertemuanHariIni: JsonCast.intOrNull(json['pertemuan_hari_ini']) ?? 0,
     absensiPerjamHariIni:
-        (json['absensi_perjam_hari_ini'] as num?)?.toInt() ?? 0,
+        JsonCast.intOrNull(json['absensi_perjam_hari_ini']) ?? 0,
     absensiHarianHariIni:
-        (json['absensi_harian_hari_ini'] as num?)?.toInt() ?? 0,
+        JsonCast.intOrNull(json['absensi_harian_hari_ini']) ?? 0,
   );
 }
 
@@ -278,13 +282,13 @@ class KonteksAkademik {
     final semester = json['semester'];
     final peringatanRaw = json['peringatan'];
     return KonteksAkademik(
-      valid: json['valid'] as bool? ?? false,
+      valid: JsonCast.boolOrNull(json['valid']) ?? false,
       peringatan: peringatanRaw is List
           ? peringatanRaw.map((e) => e.toString()).toList()
           : const [],
-      tahunAjaranId: (ta is Map ? ta['id'] as num? : null)?.toInt(),
+      tahunAjaranId: (ta is Map ? JsonCast.intOrNull(ta['id']) : null),
       tahunAjaranNama: ta is Map ? ta['nama']?.toString() : null,
-      semesterId: (semester is Map ? semester['id'] as num? : null)?.toInt(),
+      semesterId: (semester is Map ? JsonCast.intOrNull(semester['id']) : null),
       semesterNama: semester is Map ? semester['nama']?.toString() : null,
     );
   }
@@ -321,10 +325,10 @@ class JadwalGuruItem {
     final kelas = json['kelas'];
     final semester = json['semester'];
     return JadwalGuruItem(
-      id: (json['id'] as num?)?.toInt() ?? 0,
-      hari: (json['hari'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
+      hari: JsonCast.intOrNull(json['hari']) ?? 0,
       namaHari: (json['nama_hari'] ?? '').toString(),
-      jamKe: (json['jam_ke'] as num?)?.toInt(),
+      jamKe: JsonCast.intOrNull(json['jam_ke']),
       mulai: json['mulai']?.toString(),
       selesai: json['selesai']?.toString(),
       mapel: mapel is Map
@@ -333,7 +337,7 @@ class JadwalGuruItem {
       kelas: kelas is Map
           ? KelasRingkas.fromJson(Map<String, dynamic>.from(kelas))
           : const KelasRingkas(id: 0, nama: '-'),
-      semesterId: (semester is Map ? semester['id'] as num? : null)?.toInt(),
+      semesterId: (semester is Map ? JsonCast.intOrNull(semester['id']) : null),
       semesterNama: semester is Map ? semester['nama']?.toString() : null,
     );
   }
@@ -402,7 +406,7 @@ class Penugasan {
     final kelas = json['kelas'];
     final mapel = json['mapel'];
     return Penugasan(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       semester: semester is Map
           ? SemesterRingkas.fromJson(Map<String, dynamic>.from(semester))
           : const SemesterRingkas(id: 0, nama: '-'),
@@ -411,7 +415,7 @@ class Penugasan {
           : const KelasRingkas(id: 0, nama: '-'),
       mapel: mapel is Map
           ? MapelRef(
-              id: (mapel['id'] as num?)?.toInt() ?? 0,
+              id: JsonCast.intOrNull(mapel['id']) ?? 0,
               kode: mapel['kode']?.toString(),
               nama: (mapel['nama'] ?? '-').toString(),
               tahunAjaran: semester is Map
@@ -436,7 +440,7 @@ class SemesterRingkas {
 
   factory SemesterRingkas.fromJson(Map<String, dynamic> json) =>
       SemesterRingkas(
-        id: (json['id'] as num?)?.toInt() ?? 0,
+        id: JsonCast.intOrNull(json['id']) ?? 0,
         nama: (json['nama'] ?? '').toString(),
         tahunAjaran: json['tahun_ajaran']?.toString(),
       );
@@ -468,9 +472,9 @@ class KelasSiswaResponse {
     final kelas = json['kelas'];
     final siswaRaw = json['siswa'];
     return KelasSiswaResponse(
-      kelasId: (kelas is Map ? kelas['id'] as num? : null)?.toInt() ?? 0,
+      kelasId: (kelas is Map ? JsonCast.intOrNull(kelas['id']) : null) ?? 0,
       kelasNama: (kelas is Map ? kelas['nama'] : null)?.toString() ?? '-',
-      jumlah: (json['jumlah'] as num?)?.toInt() ?? 0,
+      jumlah: JsonCast.intOrNull(json['jumlah']) ?? 0,
       siswa: siswaRaw is List
           ? siswaRaw
                 .whereType<Map>()
@@ -497,7 +501,7 @@ class SiswaRingkas {
   final String? jenisKelamin;
 
   factory SiswaRingkas.fromJson(Map<String, dynamic> json) => SiswaRingkas(
-    id: (json['id'] as num?)?.toInt(),
+    id: JsonCast.intOrNull(json['id']),
     nisn: json['nisn']?.toString(),
     nis: json['nis']?.toString(),
     nama: (json['nama'] ?? '').toString(),

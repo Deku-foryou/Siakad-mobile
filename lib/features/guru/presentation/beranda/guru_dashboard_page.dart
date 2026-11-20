@@ -100,7 +100,7 @@ class _DashboardBody extends ConsumerWidget {
                       [
                         if (data.nip != null) 'NIP ${data.nip}',
                         if (data.kodeGuru != null) 'Kode ${data.kodeGuru}',
-                      ].join(' Â· '),
+                      ].join(' · '),
                       style: textTheme.bodySmall?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -141,7 +141,7 @@ class _DashboardBody extends ConsumerWidget {
                         'Tahun Ajaran ${data.konteks.tahunAjaranNama}',
                       if (data.konteks.semesterNama != null)
                         'Semester ${data.konteks.semesterNama}',
-                    ].join(' Â· '),
+                    ].join(' · '),
                   ),
                 ),
               ],
@@ -375,27 +375,30 @@ class _JadwalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: ListTile(
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              item.jamKe != null ? 'Jam ${item.jamKe}' : '-',
-              style: Theme.of(context).textTheme.titleMedium
-                  ?.copyWith(color: scheme.primary),
+        leading: CircleAvatar(
+          radius: 18,
+          backgroundColor: scheme.primaryContainer,
+          child: Text(
+            item.jamKe != null ? '${item.jamKe}' : '-',
+            style: textTheme.labelLarge?.copyWith(
+              color: scheme.onPrimaryContainer,
+              fontWeight: FontWeight.w700,
             ),
-            if (item.mulai != null)
-              Text(
-                '${item.mulai}-${item.selesai ?? ''}',
-                style: Theme.of(context).textTheme.bodySmall
-                    ?.copyWith(color: scheme.onSurfaceVariant),
-              ),
-          ],
+          ),
         ),
         title: Text(item.mapel.nama),
-        subtitle: Text('Kelas ${item.kelas.nama}'),
+        subtitle: Text(
+          [
+            if (item.mulai != null)
+              '${item.mulai}${item.selesai != null ? '–${item.selesai}' : ''}',
+            'Jam ${item.jamKe ?? '-'}',
+            'Kelas ${item.kelas.nama}',
+          ].join(' · '),
+        ),
       ),
     );
   }

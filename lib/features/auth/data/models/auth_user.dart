@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Model user mobile sesuai `UserResource` backend:
 /// `{ id, name, username, email, level, status_akun, wajib_ganti_password }`.
 class AuthUser {
@@ -30,7 +32,8 @@ class AuthUser {
       email: (json['email'] ?? '').toString(),
       level: (json['level'] ?? '').toString(),
       statusAkun: (json['status_akun'] ?? '').toString(),
-      wajibGantiPassword: json['wajib_ganti_password'] as bool? ?? false,
+      wajibGantiPassword:
+          JsonCast.boolOrNull(json['wajib_ganti_password']) ?? false,
     );
   }
 

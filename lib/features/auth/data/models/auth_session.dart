@@ -1,3 +1,4 @@
+import '../../../../core/utils/json_cast.dart';
 import 'auth_user.dart';
 
 /// Sesi hasil login: token + metadata. Dibuat oleh AuthRepository dari
@@ -34,7 +35,8 @@ class AuthSession {
       expiresAt: data['expires_at'] != null
           ? DateTime.tryParse(data['expires_at'].toString())
           : null,
-      wajibGantiPassword: (data['wajib_ganti_password'] as bool?) ?? false,
+      wajibGantiPassword:
+          JsonCast.boolOrNull(data['wajib_ganti_password']) ?? false,
       user: AuthUser.fromJson(Map<String, dynamic>.from(userJson)),
     );
   }

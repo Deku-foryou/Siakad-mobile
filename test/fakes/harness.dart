@@ -10,6 +10,8 @@ import 'fake_secure_key_value_store.dart';
 /// Rakit ProviderContainer dengan dependency ter-fake:
 /// secure storage in-memory + Dio dengan FakeHttpClientAdapter.
 /// Tidak menyentuh platform channel / jaringan sungguhan.
+Duration? _noAutomaticRetry(int retryCount, Object error) => null;
+
 ({
   ProviderContainer container,
   FakeSecureKeyValueStore store,
@@ -21,6 +23,8 @@ buildTestHarness() {
   final adapter = FakeHttpClientAdapter();
 
   final container = ProviderContainer(
+    // Sama seperti produksi (main.dart): tanpa auto-retry otomatis.
+    retry: _noAutomaticRetry,
     overrides: [
       appConfigProvider.overrideWithValue(
         const AppConfig(apiBaseUrl: 'http://test.local/api/v1'),

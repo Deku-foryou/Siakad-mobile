@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../errors/api_exception.dart';
 
 /// AsyncValueView — merender loading / error / data dari AsyncValue
 /// secara konsisten, dengan aksi retry.
@@ -59,12 +60,15 @@ class AsyncValueView<T> extends StatelessWidget {
     );
   }
 
+  /// Pesan error yang aman ditampilkan pengguna.
+  ///
+  /// Hanya menampilkan pesan [ApiException] (pesan Indonesia yang sudah
+  /// dinormalisasi — aman). Untuk error lain, JANGAN bocorkan tipe/detail
+  /// internal (mis. `TypeError: type 'String' is not a subtype ...`) —
+  /// tampilkan pesan generik saja.
   static String errorMessage(Object error) {
-    final text = error.toString();
-    // ApiException sudah membawa pesan yang aman ditampilkan; buang prefix "ApiException(...)".
-    final match = RegExp(r'message: (.*?)\)$').firstMatch(text);
-    if (match != null) return match.group(1) ?? text;
-    return text;
+    if (error is ApiException) return error.message;
+    return 'Terjadi kesalahan. Silakan coba lagi.';
   }
 }
 

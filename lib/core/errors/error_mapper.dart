@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import 'api_exception.dart';
 
@@ -16,6 +17,15 @@ class ErrorMapper {
 
   static ApiException map(Object error) {
     if (error is ApiException) return error;
+    // Debug-only: tipe exception tanpa header/token/body aman ditampilkan.
+    // Contoh: "type 'String' is not a subtype of type 'num?' in type cast"
+    // — detail penting untuk mencari bug parsing di perangkat fisik.
+    if (kDebugMode) {
+      final detail = error is DioException
+          ? 'DioException(type: ${error.type.name}, status: ${error.response?.statusCode})'
+          : error.toString();
+      debugPrint('[ErrorMapper] $detail');
+    }
     if (error is DioException) return _mapDio(error);
     return ApiException(
       kind: ApiErrorKind.unknown,

@@ -1,3 +1,5 @@
+import '../../../core/utils/json_cast.dart';
+
 import 'package:dio/dio.dart';
 
 import '../../../core/errors/api_exception.dart';
@@ -295,8 +297,8 @@ class GuruRepository {
     final data = ApiEnvelope.dataObject(response);
     final siswaRaw = data['siswa'];
     return PenugasanSiswaResponse(
-      penugasanId: (data['penugasan_id'] as num?)?.toInt() ?? id,
-      terkunci: data['terkunci'] as bool? ?? false,
+      penugasanId: JsonCast.intOrNull(data['penugasan_id']) ?? id,
+      terkunci: JsonCast.boolOrNull(data['terkunci']) ?? false,
       siswa: _listOf(siswaRaw, SiswaPenilaian.fromJson),
     );
   });
@@ -360,7 +362,7 @@ class GuruRepository {
   Future<int> unreadCount() => _guard(() async {
     final response = await _dio.get<dynamic>('/guru/notifikasi/unread-count');
     final data = ApiEnvelope.dataObject(response);
-    return (data['belum_dibaca'] as num?)?.toInt() ?? 0;
+    return JsonCast.intOrNull(data['belum_dibaca']) ?? 0;
   });
 
   Future<NotifikasiItem> notifikasiDetail(int id) => _guard(() async {
@@ -376,8 +378,8 @@ class GuruRepository {
     final response = await _dio.patch<dynamic>('/guru/notifikasi/read-all');
     final data = ApiEnvelope.dataObject(response);
     return TandaiSemuaDibacaResult(
-      ditandai: (data['ditandai'] as num?)?.toInt() ?? 0,
-      belumDibaca: (data['belum_dibaca'] as num?)?.toInt() ?? 0,
+      ditandai: JsonCast.intOrNull(data['ditandai']) ?? 0,
+      belumDibaca: JsonCast.intOrNull(data['belum_dibaca']) ?? 0,
     );
   });
 
@@ -441,10 +443,10 @@ class SimpanAbsensiResult {
 
   factory SimpanAbsensiResult.fromJson(Map<String, dynamic> json) =>
       SimpanAbsensiResult(
-        created: (json['dibuat'] as num?)?.toInt() ?? 0,
-        updated: (json['diubah'] as num?)?.toInt() ?? 0,
+        created: JsonCast.intOrNull(json['dibuat']) ?? 0,
+        updated: JsonCast.intOrNull(json['diubah']) ?? 0,
         tanggal: json['tanggal']?.toString(),
-        kelasId: (json['kelas_id'] as num?)?.toInt(),
+        kelasId: JsonCast.intOrNull(json['kelas_id']),
       );
 }
 
@@ -462,7 +464,7 @@ class AbsensiPerjamRecordEdit {
 
   factory AbsensiPerjamRecordEdit.fromJson(Map<String, dynamic> json) =>
       AbsensiPerjamRecordEdit(
-        id: (json['id'] as num?)?.toInt() ?? 0,
+        id: JsonCast.intOrNull(json['id']) ?? 0,
         status: (json['status'] ?? '').toString(),
         keterangan: json['keterangan']?.toString(),
       );
@@ -498,7 +500,7 @@ class SimpanNilaiResult {
   final int tersimpan;
 
   factory SimpanNilaiResult.fromJson(Map<String, dynamic> json) =>
-      SimpanNilaiResult(tersimpan: (json['tersimpan'] as num?)?.toInt() ?? 0);
+      SimpanNilaiResult(tersimpan: JsonCast.intOrNull(json['tersimpan']) ?? 0);
 }
 
 /// Respons `PATCH .../nilai` — `{id, siswa_id, komponen_id, nilai}`.
@@ -517,9 +519,9 @@ class NilaiTunggalResult {
 
   factory NilaiTunggalResult.fromJson(Map<String, dynamic> json) =>
       NilaiTunggalResult(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        siswaId: (json['siswa_id'] as num?)?.toInt() ?? 0,
-        komponenId: (json['komponen_id'] as num?)?.toInt() ?? 0,
-        nilai: (json['nilai'] as num?)?.toDouble() ?? 0,
+        id: JsonCast.intOrNull(json['id']) ?? 0,
+        siswaId: JsonCast.intOrNull(json['siswa_id']) ?? 0,
+        komponenId: JsonCast.intOrNull(json['komponen_id']) ?? 0,
+        nilai: JsonCast.doubleOrNull(json['nilai']) ?? 0,
       );
 }

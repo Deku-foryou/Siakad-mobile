@@ -273,18 +273,25 @@ class _TagihanTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         title: Text(item.nama, style: textTheme.titleSmall),
-        subtitle: Text(
-          [
-            if (item.jatuhTempo != null)
-              'Jatuh tempo ${Formatters.tanggalPanjang(item.jatuhTempo)}',
-            'Sisa ${Formatters.rupiah(item.sisa)}',
-          ].join('\n'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              [
+                if (item.jatuhTempo != null)
+                  'Jatuh tempo ${Formatters.tanggalPanjang(item.jatuhTempo)}',
+                'Sisa ${Formatters.rupiah(item.sisa)}',
+              ].join('\n'),
+            ),
+            const SizedBox(height: 6),
+            StatusBadge(
+              label: StatusBadge.labelOf(item.status),
+              color: StatusBadge.forStatus(item.status),
+            ),
+          ],
         ),
         isThreeLine: true,
-        trailing: StatusBadge(
-          label: StatusBadge.labelOf(item.status),
-          color: StatusBadge.forStatus(item.status),
-        ),
       ),
     );
   }

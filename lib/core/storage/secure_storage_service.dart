@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../utils/json_cast.dart';
 import 'secure_key_value_store.dart';
 
 /// Metadata sesi non-sensitif yang disimpan bersama token agar splash
@@ -40,7 +41,8 @@ class SessionMeta {
       userName: (json['user_name'] ?? '').toString(),
       username: (json['username'] ?? '').toString(),
       level: (json['level'] ?? '').toString(),
-      wajibGantiPassword: json['wajib_ganti_password'] as bool? ?? false,
+      wajibGantiPassword:
+          JsonCast.boolOrNull(json['wajib_ganti_password']) ?? false,
       tokenExpiresAt: json['token_expires_at'] != null
           ? DateTime.tryParse(json['token_expires_at'].toString())
           : null,

@@ -1,3 +1,4 @@
+import '../../core/utils/json_cast.dart';
 import 'page_meta.dart';
 
 /// Item notifikasi siswa — `NotifikasiResource` backend.
@@ -31,16 +32,16 @@ class NotifikasiItem {
   final String? dibacaPada;
 
   factory NotifikasiItem.fromJson(Map<String, dynamic> json) => NotifikasiItem(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     judul: (json['judul'] ?? '').toString(),
     isi: json['isi']?.toString(),
     jenis: json['jenis']?.toString(),
     prioritas: json['prioritas']?.toString(),
     waktuDibuat: json['waktu_dibuat']?.toString(),
     sumberTabel: json['sumber_tabel']?.toString(),
-    sumberId: (json['sumber_id'] as num?)?.toInt(),
+    sumberId: JsonCast.intOrNull(json['sumber_id']),
     link: json['link']?.toString(),
-    dibaca: json['dibaca'] as bool? ?? false,
+    dibaca: JsonCast.boolOrNull(json['dibaca']) ?? false,
     dibacaPada: json['dibaca_pada']?.toString(),
   );
 }
@@ -67,7 +68,7 @@ class NotifikasiListResponse {
               .map((e) => NotifikasiItem.fromJson(Map<String, dynamic>.from(e)))
               .toList()
         : const [],
-    belumDibaca: (json['belum_dibaca'] as num?)?.toInt() ?? 0,
+    belumDibaca: JsonCast.intOrNull(json['belum_dibaca']) ?? 0,
     meta: meta,
   );
 }

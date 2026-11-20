@@ -1,3 +1,5 @@
+import '../../../../core/utils/json_cast.dart';
+
 /// Model nilai akhir & rapor (`GET /siswa/nilai`, `/siswa/rapor`,
 /// `/rapor/{semesterId}/{kelasId}`). Semua read-only; `nilai_akhir` adalah
 /// snapshot finalisasi backend — tidak dihitung ulang di client.
@@ -19,11 +21,11 @@ class NilaiAkhirItem {
   final String? keterangan;
 
   factory NilaiAkhirItem.fromJson(Map<String, dynamic> json) => NilaiAkhirItem(
-    mapelId: (json['mapel_id'] as num?)?.toInt(),
+    mapelId: JsonCast.intOrNull(json['mapel_id']),
     mapelKode: json['mapel_kode']?.toString(),
     mapelNama: (json['mapel_nama'] ?? '-').toString(),
-    nilaiAkhir: (json['nilai_akhir'] as num?)?.toDouble() ?? 0,
-    nilaiKktp: (json['nilai_kktp'] as num?)?.toDouble(),
+    nilaiAkhir: JsonCast.doubleOrNull(json['nilai_akhir']) ?? 0,
+    nilaiKktp: JsonCast.doubleOrNull(json['nilai_kktp']),
     keterangan: json['keterangan']?.toString(),
   );
 }
@@ -44,9 +46,9 @@ class SemesterInfo {
   factory SemesterInfo.fromJson(Map<String, dynamic> json) {
     final ta = json['tahunajaran'];
     return SemesterInfo(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       nama: (json['nama'] ?? '').toString(),
-      tahunAjaranId: (ta is Map ? ta['id'] as num? : null)?.toInt(),
+      tahunAjaranId: (ta is Map ? JsonCast.intOrNull(ta['id']) : null),
       tahunAjaranNama: ta is Map ? ta['nama']?.toString() : null,
     );
   }
@@ -60,7 +62,7 @@ class KelasRaporInfo {
   final String? tingkat;
 
   factory KelasRaporInfo.fromJson(Map<String, dynamic> json) => KelasRaporInfo(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nama: (json['nama'] ?? '').toString(),
     tingkat: json['tingkat']?.toString(),
   );
@@ -147,7 +149,7 @@ class RaporDetail {
     semester: SemesterInfo.fromJson(
       Map<String, dynamic>.from(json['semester'] as Map? ?? const {}),
     ),
-    isFinal: json['is_final'] as bool? ?? true,
+    isFinal: JsonCast.boolOrNull(json['is_final']) ?? true,
     nilai: json['nilai'] is List
         ? (json['nilai'] as List)
               .whereType<Map>()
@@ -179,10 +181,10 @@ class RekapKehadiranRapor {
 
   factory RekapKehadiranRapor.fromJson(Map<String, dynamic> json) =>
       RekapKehadiranRapor(
-        hadir: (json['hadir'] as num?)?.toInt() ?? 0,
-        sakit: (json['sakit'] as num?)?.toInt() ?? 0,
-        izin: (json['izin'] as num?)?.toInt() ?? 0,
-        alpha: (json['alpha'] as num?)?.toInt() ?? 0,
-        total: (json['total'] as num?)?.toInt() ?? 0,
+        hadir: JsonCast.intOrNull(json['hadir']) ?? 0,
+        sakit: JsonCast.intOrNull(json['sakit']) ?? 0,
+        izin: JsonCast.intOrNull(json['izin']) ?? 0,
+        alpha: JsonCast.intOrNull(json['alpha']) ?? 0,
+        total: JsonCast.intOrNull(json['total']) ?? 0,
       );
 }

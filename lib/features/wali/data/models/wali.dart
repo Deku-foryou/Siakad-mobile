@@ -1,3 +1,4 @@
+import '../../../../core/utils/json_cast.dart';
 import '../../../siswa/data/models/beranda.dart'; // KonteksAkademik
 
 /// Model untuk API wali murid (`/api/v1/wali/*`).
@@ -24,10 +25,10 @@ class RelasiRingkasan {
 
   factory RelasiRingkasan.fromJson(Map<String, dynamic> json) =>
       RelasiRingkasan(
-        verified: (json['verified'] as num?)?.toInt() ?? 0,
-        pending: (json['pending'] as num?)?.toInt() ?? 0,
-        rejected: (json['rejected'] as num?)?.toInt() ?? 0,
-        terminated: (json['terminated'] as num?)?.toInt() ?? 0,
+        verified: JsonCast.intOrNull(json['verified']) ?? 0,
+        pending: JsonCast.intOrNull(json['pending']) ?? 0,
+        rejected: JsonCast.intOrNull(json['rejected']) ?? 0,
+        terminated: JsonCast.intOrNull(json['terminated']) ?? 0,
       );
 }
 
@@ -54,12 +55,13 @@ class ProfilWali {
   factory ProfilWali.fromJson(Map<String, dynamic> json) {
     final relasi = json['relasi'];
     return ProfilWali(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: JsonCast.intOrNull(json['id']) ?? 0,
       name: (json['name'] ?? '').toString(),
       username: (json['username'] ?? '').toString(),
       email: json['email']?.toString(),
       statusAkun: json['status_akun']?.toString(),
-      wajibGantiPassword: json['wajib_ganti_password'] as bool? ?? false,
+      wajibGantiPassword:
+          JsonCast.boolOrNull(json['wajib_ganti_password']) ?? false,
       relasi: relasi is Map
           ? RelasiRingkasan.fromJson(Map<String, dynamic>.from(relasi))
           : const RelasiRingkasan(),
@@ -84,7 +86,7 @@ class AnakRingkas {
   final String? kelas;
 
   factory AnakRingkas.fromJson(Map<String, dynamic> json) => AnakRingkas(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nisn: json['nisn']?.toString(),
     nis: json['nis']?.toString(),
     nama: json['nama']?.toString(),
@@ -110,12 +112,12 @@ class BerandaWaliRingkasan {
 
   factory BerandaWaliRingkasan.fromJson(Map<String, dynamic> json) =>
       BerandaWaliRingkasan(
-        jumlahAnak: (json['jumlah_anak'] as num?)?.toInt() ?? 0,
-        jumlahMenunggu: (json['jumlah_menunggu'] as num?)?.toInt() ?? 0,
-        jumlahDitolak: (json['jumlah_ditolak'] as num?)?.toInt() ?? 0,
-        jumlahBerakhir: (json['jumlah_berakhir'] as num?)?.toInt() ?? 0,
+        jumlahAnak: JsonCast.intOrNull(json['jumlah_anak']) ?? 0,
+        jumlahMenunggu: JsonCast.intOrNull(json['jumlah_menunggu']) ?? 0,
+        jumlahDitolak: JsonCast.intOrNull(json['jumlah_ditolak']) ?? 0,
+        jumlahBerakhir: JsonCast.intOrNull(json['jumlah_berakhir']) ?? 0,
         notifikasiBelumDibaca:
-            (json['notifikasi_belum_dibaca'] as num?)?.toInt() ?? 0,
+            JsonCast.intOrNull(json['notifikasi_belum_dibaca']) ?? 0,
       );
 }
 
@@ -149,12 +151,13 @@ class BerandaWali {
     final anakRaw = json['anak'];
     final ringkasan = json['ringkasan'];
     return BerandaWali(
-      userId: (user is Map ? user['id'] as num? : null)?.toInt() ?? 0,
+      userId: (user is Map ? JsonCast.intOrNull(user['id']) : null) ?? 0,
       name: user is Map ? (user['name'] ?? '').toString() : '',
       username: user is Map ? (user['username'] ?? '').toString() : '',
       akunUsername: akun is Map ? (akun['username'] ?? '-').toString() : '-',
       wajibGantiPassword:
-          akun is Map && (akun['wajib_ganti_password'] as bool? ?? false),
+          akun is Map &&
+          (JsonCast.boolOrNull(akun['wajib_ganti_password']) ?? false),
       konteks: json['konteks'] is Map
           ? KonteksAkademik.fromJson(
               Map<String, dynamic>.from(json['konteks'] as Map),
@@ -195,12 +198,12 @@ class AnakSiswa {
   final String? status;
 
   factory AnakSiswa.fromJson(Map<String, dynamic> json) => AnakSiswa(
-    id: (json['id'] as num?)?.toInt() ?? 0,
+    id: JsonCast.intOrNull(json['id']) ?? 0,
     nisn: json['nisn']?.toString(),
     nis: json['nis']?.toString(),
     nama: json['nama']?.toString(),
     jenisKelamin: json['jenis_kelamin']?.toString(),
-    tahunMasuk: (json['tahun_masuk'] as num?)?.toInt(),
+    tahunMasuk: JsonCast.intOrNull(json['tahun_masuk']),
     status: json['status']?.toString(),
   );
 }
@@ -236,13 +239,14 @@ class AnakRelasi {
   factory AnakRelasi.fromJson(Map<String, dynamic> json) {
     final siswa = json['siswa'];
     return AnakRelasi(
-      relasiId: (json['relasi_id'] as num?)?.toInt() ?? 0,
+      relasiId: JsonCast.intOrNull(json['relasi_id']) ?? 0,
       hubungan: json['hubungan']?.toString(),
       statusHubungan: (json['status_hubungan'] ?? '').toString(),
       tanggalMulai: json['tanggal_mulai']?.toString(),
       tanggalBerhenti: json['tanggal_berhenti']?.toString(),
       tanggalVerifikasi: json['tanggal_verifikasi']?.toString(),
-      bisaAksesAkademik: json['bisa_akses_akademik'] as bool? ?? false,
+      bisaAksesAkademik:
+          JsonCast.boolOrNull(json['bisa_akses_akademik']) ?? false,
       kelas: json['kelas']?.toString(),
       siswa: siswa is Map
           ? AnakSiswa.fromJson(Map<String, dynamic>.from(siswa))
