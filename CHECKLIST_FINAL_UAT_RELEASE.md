@@ -74,16 +74,41 @@ benar-benar dicoba. Status yang sah: `PASS` / `FAIL` / `BLOCKED` /
 
 | # | Item | Status | Catatan |
 |---|---|---|---|
-| F1 | Release signing terkonfigurasi (android/key.properties + keystore) | BLOCKED (keystore belum tersedia) | |
+| F1 | Release signing terkonfigurasi (android/key.properties + keystore) | BLOCKED (keystore tidak tersedia — `android/key.properties` tidak ada; per docs/ANDROID_RELEASE_GUIDE.md) | |
 | F2 | Install release build ke perangkat | BLOCKED (menunggu F1) | |
-| F3 | Application ID: `com.example.siakad_mobile` (belum diganti — perlu keputusan pemilik aplikasi) | NOT TESTED | |
+| F3 | Application ID: `com.apps.siakad` — terverifikasi: namespace + applicationId (`android/app/build.gradle.kts`), package MainActivity (`android/app/src/main/kotlin/com/apps/siakad/MainActivity.kt`), PRODUCT_BUNDLE_IDENTIFIER (iOS pbxproj), PRODUCT_BUNDLE_IDENTIFIER (macos AppInfo.xcconfig) | PASS (statik) | |
 | F4 | Version: versionName 1.0.0 / versionCode 1 (dari pubspec) | NOT TESTED | |
 | F5 | Permission: hanya INTERNET (+ plugin open_filex) — tidak ada permission spekulatif | PASS (audit statis merged manifest debug; release sama + cleartext=false) | Merged manifest debug terverifikasi |
 | F6 | API base URL release wajib https:// + API_BASE_URL eksplisit | PASS (enforce di kode; startup gagal jelas jika tidak diisi) | |
 | F7 | Crash/error logging — LoggingInterceptor debug-only; release bersih | PASS (audit statis) | |
 | F8 | Backup policy: allowBackup=false + dataExtractionRules exclude-all | PASS (audit statis) | |
-| F9 | Ukuran artifact release | BLOCKED (release belum bisa dibangun — signing belum tersedia) | Debug APK: ~234 MB |
+| F9 | Ukuran artifact release | BLOCKED (release belum bisa dibangun — signing belum tersedia) | Debug APK: ~246 MB |
 | F10 | Nomor build sesuai distribusi | NOT TESTED | |
+
+## G. Redmi 9A — UAT Fisik (Android fisik)
+
+Pisahkan dari automated testing — semua item NOT TESTED, dicentang hanya setelah dijalankan di perangkat fisik Redmi 9A (skema instalasi: fresh install, lalu update).
+
+| # | Item | Status | Catatan |
+|---|---|---|---|
+| G1 | Instalasi fresh (aplikasi belum pernah terpasang) | NOT TESTED | |
+| G2 | Login siswa (role guard, shell siswa tampil) | NOT TESTED | |
+| G3 | Login guru | NOT TESTED | |
+| G4 | Login wali (daftar anak, pemilihan anak) | NOT TESTED | |
+| G5 | Session restoration (logout → login; sesi terpulihkan) | NOT TESTED | |
+| G6 | Logout perangkat ini | NOT TESTED | |
+| G7 | Logout semua perangkat | NOT TESTED | |
+| G8 | Token expired / token dicabut backend → app tidak crash, sesi ditutup, diarahkan login | NOT TESTED | |
+| G9 | Koneksi terputus (mode pesawat) → error view ramah, retry bekerja | NOT TESTED | |
+| G10 | Dashboard setiap role (beranda siswa/guru/wali) | NOT TESTED | |
+| G11 | Navigasi & back navigation | NOT TESTED | |
+| G12 | Akademik: jadwal (filter), absensi (harian/per jam), nilai akhir, rapor | NOT TESTED | |
+| G13 | Pengumuman & notifikasi (list/detail/mark read/mark all) | NOT TESTED | |
+| G14 | Keuangan & dokumen privat (tagihan, pembayaran, kuitansi/bukti download) | NOT TESTED | |
+| G15 | Pergantian anak pada akun wali (isolasi data, banner terkunci) | NOT TESTED | |
+| G16 | Responsivitas layar kecil (Redmi 9A 320dp+, textScale normal/besar) | NOT TESTED | |
+| G17 | Tidak ada layout overflow atau crash pada semua menu | NOT TESTED | |
+| G18 | Tidak ada infinite request loop (request count) | NOT TESTED | |
 
 ## Catatan penggunaan
 

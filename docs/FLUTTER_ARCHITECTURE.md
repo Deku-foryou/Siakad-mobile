@@ -572,7 +572,7 @@ dinilai dari token (relasi verified + pembayaran milik anak tsb).
 ### 16.3 Android release
 
 - Manifest utama: INTERNET eksplisit (sebelumnya hanya debug/profile) +
-  label "SIAKAD"; application ID `com.example.siakad_mobile` (tidak diubah).
+  label "SIAKAD"; application ID `com.apps.siakad` (perkeputusan rilis).
 - Signing release via `android/key.properties` (git-ignored) → `signingConfigs.release`;
   **tanpa key.properties, task release GAGAL JELAS** (bukan debug-key fallback).
   Contoh: `android/key.properties.example`; panduan: `docs/ANDROID_RELEASE_GUIDE.md`.
@@ -581,8 +581,9 @@ dinilai dari token (relasi verified + pembayaran milik anak tsb).
   & secure_storage tidak butuh rules; keputusan dapat ditinjau saat uji perangkat).
 - Dart obfuscation: tidak diaktifkan (crash trace tetap terbaca); panduan
   symbol map ada di release guide.
-- Application ID & `com.example.*`: dibiarkan (keputusan distribusi pemilik
-  aplikasi; penggantian = keputusan rilis).
+- Application ID: `com.apps.siakad` (tertulis di `android/app/build.gradle.kts`,
+  `android/app/src/main/kotlin/com/apps/siakad/MainActivity.kt`,
+  `ios/Runner.xcodeproj/project.pbxproj`, `macos/Runner/Configs/AppInfo.xcconfig`).
 
 ### 16.4 Testing
 
